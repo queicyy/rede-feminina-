@@ -1,0 +1,9 @@
+* {
+  font-family: 'Montserrat', Arial, sans-serif;
+}
+
+*,
+:after,
+:before {
+  box-sizing: border-box;
+}

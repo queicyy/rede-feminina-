@@ -1,0 +1,7 @@
+{
+  "name": "extensao-rfcc",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
