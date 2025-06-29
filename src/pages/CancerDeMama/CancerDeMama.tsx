@@ -1,10 +1,10 @@
 import React from 'react'
 import AppLayout from '../../components/appLayout'
-import { useNavigate } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { Container, MenuWrapper, Menu } from './styles'
 
 const CancerDeMama: React.FC = () => {
-  const navigate = useNavigate()
+  const history = useHistory()
 
   const buttonsData = [
     { text: 'O que é?', route: '/cancer/mama/o-que-e' },
@@ -17,11 +17,11 @@ const CancerDeMama: React.FC = () => {
   ]
 
   const handleRedirect = (route: number) => {
-    navigate(buttonsData[route].route)
+    history.push(buttonsData[route].route)
   }
 
   return (
-    <AppLayout title='Câncer de Mama'>
+    <AppLayout title='Câncer de Mama' history={history}>
       <Container>
         {buttonsData.map((button, index) => (
           <MenuWrapper key={index} onClick={() => handleRedirect(index)}>

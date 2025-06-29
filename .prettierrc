@@ -3,7 +3,7 @@
   "printWidth": 120,
   "bracketSpacing": true,
   "trailingComma": "all",
-  "semi": false,
+  "semi": true,
   "arrowParents": "avoid",
   "jsxSingleQuote": true
 }
