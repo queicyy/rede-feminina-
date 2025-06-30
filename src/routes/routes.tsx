@@ -22,7 +22,10 @@ import FatoresRisco from '../pages/cancerDeMama/FatoresRisco';
 import FatoresProtecao from '../pages/cancerDeMama/FatoresProtecao';
 import { FormSinaisSintomasColoUtero } from '../pages/coloUtero/components';
 import { FormCancerMama } from '../pages/cancerDeMama/components';
+<<<<<<< HEAD
 import { useFirebase } from '../FirebaseContext';
+=======
+>>>>>>> 51c80711d9b874474c5b336fac4e7e053a04d7b6
 
 const AppRoutes: React.FC = () => {
   return (
