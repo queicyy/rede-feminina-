@@ -1,19 +1,19 @@
-import { initializeApp } from 'firebase/app'
-import { getFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: 'AIzaSyCSSirtNuWWVy6EJTO7QI7bRJeJmDE5bhI',
-  authDomain: 'rfcc-itapema.firebaseapp.com',
-  projectId: 'rfcc-itapema',
-  storageBucket: 'rfcc-itapema.appspot.com',
-  messagingSenderId: '457569534088',
-  appId: '1:457569534088:web:1650b9106f5b6609231f3d',
-}
+  apiKey: "AIzaSyD6hhayWRgHERc0XQvaDYiXYwO4TM4ie-g",
+  authDomain: "extensao-rfcc-queicy.firebaseapp.com",
+  projectId: "extensao-rfcc-queicy",
+  storageBucket: "extensao-rfcc-queicy.firebasestorage.app",
+  messagingSenderId: "66130175319",
+  appId: "1:66130175319:web:fbbbaf4775cdcee87bca12",
+};
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig)
+// Initialize Firebase - check if app already exists
+const app = getApps().find(app => app.name === 'main') || initializeApp(firebaseConfig, 'main');
 
 const firestore = getFirestore(app);
 const auth = getAuth(app);

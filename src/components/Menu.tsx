@@ -8,9 +8,9 @@ import {
   IonMenu,
   IonMenuToggle,
   IonNote,
-} from '@ionic/react'
+} from '@ionic/react';
 
-import { useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom';
 import {
   femaleOutline,
   femaleSharp,
@@ -26,17 +26,25 @@ import {
   womanSharp,
   bookOutline,
   bookSharp,
-} from 'ionicons/icons'
-import './Menu.css'
+  enterSharp,
+} from 'ionicons/icons';
+import './Menu.css';
+import { useFirebase } from '../FirebaseContext';
 
 interface AppPage {
-  url: string
-  iosIcon: string
-  mdIcon: string
-  title: string
+  url: string;
+  iosIcon: string;
+  mdIcon: string;
+  title: string;
 }
 
 const appPages: AppPage[] = [
+  {
+    title: 'Login',
+    url: '/login',
+    iosIcon: mailOutline,
+    mdIcon: enterSharp,
+  },
   {
     title: 'Página Inicial',
     url: '/',
@@ -85,10 +93,11 @@ const appPages: AppPage[] = [
     iosIcon: helpCircleOutline,
     mdIcon: helpCircleSharp,
   },
-]
+];
 
 const Menu: React.FC = () => {
-  const location = useLocation()
+  const location = useLocation();
+  const { user } = useFirebase();
 
   return (
     <IonMenu contentId='main' type='overlay'>
@@ -96,26 +105,33 @@ const Menu: React.FC = () => {
         <IonList id='inbox-list'>
           <IonListHeader>RFCC Itapema</IonListHeader>
           <IonNote>rfccitapema@outlook.com</IonNote>
-          {appPages.map((appPage, index) => {
-            return (
-              <IonMenuToggle key={index} autoHide={false}>
-                <IonItem
-                  className={location.pathname === appPage.url ? 'selected' : ''}
-                  routerLink={appPage.url}
-                  routerDirection='none'
-                  lines='none'
-                  detail={false}
-                >
-                  <IonIcon aria-hidden='true' slot='start' ios={appPage.iosIcon} md={appPage.mdIcon} />
-                  <IonLabel>{appPage.title}</IonLabel>
-                </IonItem>
-              </IonMenuToggle>
-            )
-          })}
+          {appPages
+            .filter((appPage) => {
+              if (appPage.title === 'Login' && user) {
+                return false;
+              }
+              return true;
+            })
+            .map((appPage, index) => {
+              return (
+                <IonMenuToggle key={index} autoHide={false}>
+                  <IonItem
+                    className={location.pathname === appPage.url ? 'selected' : ''}
+                    routerLink={appPage.url}
+                    routerDirection='none'
+                    lines='none'
+                    detail={false}
+                  >
+                    <IonIcon aria-hidden='true' slot='start' ios={appPage.iosIcon} md={appPage.mdIcon} />
+                    <IonLabel>{appPage.title}</IonLabel>
+                  </IonItem>
+                </IonMenuToggle>
+              );
+            })}
         </IonList>
       </IonContent>
     </IonMenu>
-  )
-}
+  );
+};
 
-export default Menu
+export default Menu;

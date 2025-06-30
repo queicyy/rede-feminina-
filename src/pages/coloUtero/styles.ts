@@ -16,8 +16,7 @@ export const Header = styled.div`
     font-size: 24px;
 `;
 export const MenuWrapper = styled.div`
-    margin-top: 2px;
-    text-align: center;
+    margin-top: 20px;
 
     & a {
         text-decoration: none;
@@ -39,6 +38,7 @@ export const Menu = styled.div`
     text-transform: uppercase;
     padding: 10px;
     transition: 0.2s ease-in-out;
+    text-align: center;
 
     &:hover {
         background: #ffc0ad;
