@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useState, Dispatch, SetStateAction } from 'react';
-import { User, onAuthStateChanged } from 'firebase/auth';
-import { authInfoPages } from './firebase/firebaseInforPages';
+import { createContext, useContext, useEffect, useState, Dispatch, SetStateAction } from "react";
+import { User, onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase/firebase";
 
 interface Props {
   children: React.ReactNode;
@@ -20,7 +20,7 @@ export const FirebaseProvider: React.FC<Props> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(authInfoPages, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setIsLoading(false);
     });
@@ -37,7 +37,7 @@ export const useFirebase = (): FirebaseContextValues => {
   const firebaseContext = useContext(FirebaseContext);
 
   if (!firebaseContext) {
-    throw new Error('Erro no context');
+    throw new Error("Erro no context");
   }
 
   return firebaseContext;

@@ -1,16 +1,16 @@
-import React from 'react'
-import AppLayout from '../../components/appLayout'
-import { Body, Container, Description, DescriptionContainer, WrapperDonation } from './style'
-import CardText from '../../components/common/CardText/CardText'
-import { useHistory } from 'react-router'
+import React from "react";
+import AppLayout from "../../components/appLayout";
+import { Body, Container, Description, DescriptionContainer, WrapperDonation } from "./style";
+import CardText from "../../components/common/CardText/CardText";
+import { useHistory } from "react-router";
 
 export default function AgendarColetaScreen() {
-  const history = useHistory()
+  const history = useHistory();
 
   return (
-    <AppLayout title='Agendar Coleta' history={history}>
+    <AppLayout title="Exame Preventivo" history={history}>
       <Container>
-        <CardText text='Orientações' fontSize='20px' />
+        <CardText text="Orientações" fontSize="20px" />
         <Body>
           <p>
             Realiza exame preventivo do câncer de colo de útero. Os exames preventivos são coletados por enfermeira
@@ -49,13 +49,13 @@ export default function AgendarColetaScreen() {
           <p>* Inversão do mamilo;</p>
           <p>*Espassamento ou retração da pele ou mamilo.</p>
 
-          <div style={{ marginBottom: '35px' }} />
+          <div style={{ marginBottom: "35px" }} />
 
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <CardText text='Horários de Coleta' fontSize='20px' />
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+            <CardText text="Horários de Coleta" fontSize="20px" />
 
             <WrapperDonation>
-              <Description width='40%'>De segunda à sexta</Description>
+              <Description width="40%">De segunda à sexta</Description>
               <DescriptionContainer>
                 <Description>Das 8h às 10h30</Description>
                 <Description>E de 10h30 às 16hs</Description>
@@ -65,5 +65,5 @@ export default function AgendarColetaScreen() {
         </Body>
       </Container>
     </AppLayout>
-  )
+  );
 }
