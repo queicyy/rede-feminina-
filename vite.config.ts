@@ -18,12 +18,12 @@ export default defineConfig({
         theme_color: '#e9b7c8',
         icons: [
           {
-            src: '/favicon.png',
+            src: '/assets/images/logo_rfcc.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: '/favicon.png',
+            src: '/assets/images/logo_rfcc.png',
             sizes: '512x512',
             type: 'image/png'
           }
