@@ -31,6 +31,8 @@ import {
   settingsOutline,
   listOutline,
   logOutOutline,
+  cartOutline,
+  cartSharp,
 } from "ionicons/icons";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase/firebase";
@@ -69,12 +71,8 @@ const appPages: AppPage[] = [
     iosIcon: heartOutline,
     mdIcon: heartSharp,
   },
-  {
-    title: "Notícias",
-    url: "/noticias",
-    iosIcon: newspaperOutline,
-    mdIcon: newspaperSharp,
-  },
+  { title: "Mostruário", url: "/mostruario", iosIcon: cartOutline, mdIcon: cartSharp },
+  { title: "Notícias", url: "/noticias", iosIcon: newspaperOutline, mdIcon: newspaperSharp },
   {
     title: "Exame Preventivo",
     url: "/exame-preventivo",

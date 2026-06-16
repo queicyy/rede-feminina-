@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, IonInput, IonSpinner } from '@ionic/react';
-import { loginUser, registerUser, loginUserWithGoogle } from '../../services/authService';
-import { useFirebase } from '../../FirebaseContext';
-import styled from 'styled-components';
-import logoImage from '../../../public/assets/images/logo_rfcc.png';
-import { useHistory } from 'react-router';
+import React, { useState } from "react";
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, IonInput, IonSpinner } from "@ionic/react";
+import { loginUser, registerUser, loginUserWithGoogle } from "../../services/authService";
+import { useFirebase } from "../../FirebaseContext";
+import styled from "styled-components";
+import logoImage from "/assets/images/logo_rfcc.png";
+import { useHistory } from "react-router";
 
 const StyledIonButton = styled(IonButton)`
   --background: #ffc0cb !important;
@@ -56,25 +56,25 @@ const SpinnerWrapper = styled.div`
 const Login: React.FC = () => {
   const history = useHistory();
   const { user, isLoading, setUser } = useFirebase();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
+  const [toastMessage, setToastMessage] = useState("");
 
   const validateEmail = (email: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return email.trim() !== '' && re.test(email);
+    return email.trim() !== "" && re.test(email);
   };
 
   const validatePassword = (password: string) => {
-    return password.trim() !== '' && password.length >= 6;
+    return password.trim() !== "" && password.length >= 6;
   };
 
   const handleLogin = async () => {
     setShowToast(false);
 
     if (!validateEmail(email) || !validatePassword(password)) {
-      setToastMessage('Por favor, informe um email e senha válidos.');
+      setToastMessage("Por favor, informe um email e senha válidos.");
       setShowToast(true);
       return;
     }
@@ -82,77 +82,78 @@ const Login: React.FC = () => {
     try {
       const result = await loginUser(email, password);
 
-      if ('error' in result) {
+      if ("error" in result) {
         const errorCode = result.error.code;
 
-        if (errorCode === 'auth/user-not-found') {
-          setToastMessage('Usuário Não Encontrado.');
-        } else if (errorCode === 'auth/wrong-password') {
-          setToastMessage('Senha Incorreta.');
-        } else if (errorCode === 'auth/invalid-credential') {
-          setToastMessage('Credenciais Inválidas.');
+        if (errorCode === "auth/user-not-found") {
+          setToastMessage("Usuário Não Encontrado.");
+        } else if (errorCode === "auth/wrong-password") {
+          setToastMessage("Senha Incorreta.");
+        } else if (errorCode === "auth/invalid-credential") {
+          setToastMessage("Credenciais Inválidas.");
         } else {
-          setToastMessage('Erro ao Realizar Login.');
+          setToastMessage("Erro ao Realizar Login.");
         }
         setShowToast(true);
       } else {
         setUser(result.user);
-        history.push('/');
+        history.push("/");
       }
     } catch (error) {
-      console.error('Erro ao tentar fazer login:', error);
-      setToastMessage('Erro ao tentar fazer login. Por favor, tente novamente.');
+      console.error("Erro ao tentar fazer login:", error);
+      setToastMessage("Erro ao tentar fazer login. Por favor, tente novamente.");
       setShowToast(true);
     }
   };
-
 
   const handleRegister = async () => {
     setShowToast(false);
 
     if (!validateEmail(email) || !validatePassword(password)) {
-      setToastMessage('Por favor, informe um email e senha válidos.');
+      setToastMessage("Por favor, informe um email e senha válidos.");
       setShowToast(true);
       return;
     }
     try {
       const result = await registerUser(email, password);
-      if ('error' in result) {
+      if ("error" in result) {
         const errorCode = result.error.code;
-        if (errorCode === 'auth/email-already-in-use') {
-          setToastMessage('Email já cadastrado.');
+        if (errorCode === "auth/email-already-in-use") {
+          setToastMessage("Email já cadastrado.");
         } else {
-          setToastMessage('Erro ao Cadastrar Usuário');
+          setToastMessage("Erro ao Cadastrar Usuário");
         }
         setShowToast(true);
       } else {
         setUser(result.user);
-        history.push('/');
+        history.push("/");
       }
     } catch (error) {
-      console.error('Erro ao tentar cadastrar usuário:', error);
-      setToastMessage('Erro ao tentar realizar o cadastro. Por favor, tente novamente.');
+      console.error("Erro ao tentar cadastrar usuário:", error);
+      setToastMessage("Erro ao tentar realizar o cadastro. Por favor, tente novamente.");
       setShowToast(true);
     }
   };
 
-  const handleGoogleLogin = async () => {
-    try {
-      const result = await loginUserWithGoogle();
+  // deprecated - Google login is currently disabled due to issues with the Firebase configuration. Please use email and password login for now.
 
-      if ('error' in result) {
-        setToastMessage('Erro ao Realizar Login com Google.');
-        setShowToast(true);
-      } else {
-        setUser(result.user);
-        history.push('/');
-      }
-    } catch (error) {
-      console.error('Erro ao tentar fazer login com Google:', error);
-      setToastMessage('Erro ao tentar fazer login com Google. Por favor, tente novamente.');
-      setShowToast(true);
-    }
-  };
+  // const handleGoogleLogin = async () => {
+  //   try {
+  //     const result = await loginUserWithGoogle();
+
+  //     if ('error' in result) {
+  //       setToastMessage('Erro ao Realizar Login com Google.');
+  //       setShowToast(true);
+  //     } else {
+  //       setUser(result.user);
+  //       history.push('/');
+  //     }
+  //   } catch (error) {
+  //     console.error('Erro ao tentar fazer login com Google:', error);
+  //     setToastMessage('Erro ao tentar fazer login com Google. Por favor, tente novamente.');
+  //     setShowToast(true);
+  //   }
+  // };
 
   if (isLoading) {
     return (
@@ -183,11 +184,7 @@ const Login: React.FC = () => {
       <IonContent className="ion-padding">
         <StyledLogoImage width={"150px"} src={logoImage} alt="Logo RFCC" />
 
-        <IonInput
-          value={email}
-          placeholder="Email"
-          onIonChange={(e) => setEmail(e.detail.value!)}
-        />
+        <IonInput value={email} placeholder="Email" onIonChange={(e) => setEmail(e.detail.value!)} />
         <IonInput
           type="password"
           value={password}
@@ -200,14 +197,14 @@ const Login: React.FC = () => {
         <StyledIonButton expand="block" onClick={handleRegister}>
           Registrar
         </StyledIonButton>
-        <StyledIonButton expand="block" onClick={handleGoogleLogin}>
+        {/* <StyledIonButton expand="block" onClick={handleGoogleLogin}>
           Login com Google
-        </StyledIonButton>
+        </StyledIonButton> */}
         {showToast && (
           <CenteredMessage>
             {toastMessage}
             <br />
-            <IonButton onClick={() => setShowToast(false)} style={{ marginTop: '10px' }}>
+            <IonButton onClick={() => setShowToast(false)} style={{ marginTop: "10px" }}>
               Ok
             </IonButton>
           </CenteredMessage>

@@ -26,6 +26,7 @@ import { FormCancerMama } from "../pages/CancerDeMama/components";
 import { CalendarPage } from "../pages/Calendar";
 import AvailabilityConfig from "../pages/Admin/Agendamentos/Availability";
 import AgendamentosDashboard from "../pages/Admin/Agendamentos/Dashboard";
+import Mostruario from "../pages/Mostruario/Mostruario";
 
 const AppRoutes: React.FC = () => {
   const { user, isLoading } = useFirebase();
@@ -134,6 +135,10 @@ const AppRoutes: React.FC = () => {
       {/* Contato */}
       <Route path="/contato">
         <Contato />
+      </Route>
+
+      <Route path="/mostruario">
+        <Mostruario />
       </Route>
 
       {/* Admin - Agendamentos */}
