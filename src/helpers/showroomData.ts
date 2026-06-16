@@ -1,3 +1,11 @@
+export interface ShowroomItem {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+}
+
 export const showroomItems: ShowroomItem[] = [
   {
     id: "art-1",
