@@ -71,7 +71,7 @@ const appPages: AppPage[] = [
     iosIcon: heartOutline,
     mdIcon: heartSharp,
   },
-  { title: "Mostruário", url: "/mostruario", iosIcon: cartOutline, mdIcon: cartSharp },
+  { title: "Vitrine Virtual", url: "/mostruario", iosIcon: cartOutline, mdIcon: cartSharp },
   { title: "Notícias", url: "/noticias", iosIcon: newspaperOutline, mdIcon: newspaperSharp },
   {
     title: "Exame Preventivo",

@@ -29,7 +29,9 @@ const Mostruario: React.FC = () => {
   const adminPhone = import.meta.env.VITE_WHATSAPP_ADMIN_SCHEDULE;
 
   const handleOpenWhatsApp = (item: ShowroomItem) => {
-    const text = `Olá! Estava navegando no site da Rede Feminina e tenho interesse em comprar o item: *${item.title}* (R$ ${item.price.toFixed(2).replace(".", ",")}). Como podemos dar andamento?`;
+    const text = `Olá! Estava navegando no site da Rede Feminina e tenho interesse em comprar o item: *${
+      item.title
+    }* (R$ ${item.price.toFixed(2).replace(".", ",")}). Como podemos dar andamento?`;
     const encodedText = encodeURIComponent(text);
     const whatsappUrl = `https://wa.me/${adminPhone}?text=${encodedText}`;
     window.open(whatsappUrl, "_blank");
@@ -42,7 +44,7 @@ const Mostruario: React.FC = () => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/" />
           </IonButtons>
-          <IonTitle>Mostruário</IonTitle>
+          <IonTitle>Vitrine Virtual</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
@@ -63,7 +65,16 @@ const Mostruario: React.FC = () => {
                   onClick={() => setSelectedItem(item)}
                   style={{ display: "flex", flexDirection: "column", height: "100%" }}
                 >
-                  <IonImg src={item.imageUrl} alt={item.title} style={{ height: "200px", objectFit: "cover" }} />
+                  <IonImg
+  src={item.imageUrl}
+  alt={item.title}
+  style={{
+    height: "300px",
+    width: "100%",
+    objectFit: "contain",
+    backgroundColor: "#fff"
+  }}
+/>
                   <IonCardHeader>
                     <IonCardTitle style={{ fontSize: "1.2rem" }}>{item.title}</IonCardTitle>
                     <IonCardSubtitle color="success" style={{ fontWeight: "bold", fontSize: "1.1rem" }}>
@@ -117,8 +128,8 @@ const Mostruario: React.FC = () => {
                   alt={selectedItem.title}
                   style={{
                     borderRadius: "8px",
-                    maxHeight: "300px",
-                    objectFit: "cover",
+                    maxHeight: "220px",
+                    objectFit: "contain",
                     width: "100%",
                     marginBottom: "20px",
                     display: "block",
