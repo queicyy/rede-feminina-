@@ -37,9 +37,13 @@ const CalendarPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [description, setDescription] = useState("");
+
+  const [institutionType, setInstitutionType] = useState("");
+  const [participants, setParticipants] = useState("");
+  const [address, setAddress] = useState("");
+
   const [toastMsg, setToastMsg] = useState("");
   const [success, setSuccess] = useState(false);
-
   useEffect(() => {
     if (selectedDate) {
       fetchAvailableSlots(selectedDate).catch((err) => setToastMsg(err.message));
@@ -88,10 +92,31 @@ const CalendarPage: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar color="">
-          <IonTitle>Agendar Apresentação</IonTitle>
+          <IonTitle>Solicitar Palestra</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
+        <div
+          style={{
+            backgroundColor: "#fff3f7",
+            padding: "15px",
+            borderRadius: "10px",
+            marginBottom: "20px",
+            border: "1px solid #f7c6d7",
+          }}
+        >
+          <h3>Palestras Outubro Rosa</h3>
+
+          <p>
+            A Rede Feminina de Combate ao Câncer de Itapema realiza palestras de conscientização sobre prevenção e
+            diagnóstico precoce do câncer de mama.
+          </p>
+
+          <p>
+            Consulte as datas disponíveis e envie sua solicitação de agendamento. Nossa equipe analisará o pedido e
+            entrará em contato para confirmação.
+          </p>
+        </div>
         {success ? (
           <div style={{ textAlign: "center", marginTop: "50px" }}>
             <IonIcon icon={checkmarkCircleOutline} color="success" style={{ fontSize: "80px" }} />
@@ -159,10 +184,22 @@ const CalendarPage: React.FC = () => {
 
                 {selectedSlot && (
                   <IonCard>
-                    <IonCardHeader>
-                      <IonCardTitle>3. Seus Dados</IonCardTitle>
-                    </IonCardHeader>
-                    <IonCardContent>
+                   <IonCardHeader>
+  <IonCardTitle>
+    3. Informações da Instituição
+  </IonCardTitle>
+</IonCardHeader>
+
+<IonCardContent>
+  <p
+    style={{
+      fontSize: "12px",
+      marginBottom: "10px",
+      color: "#d63384",
+    }}
+  >
+    * Campos obrigatórios
+  </p>
                       <IonItem>
                         <IonLabel position="stacked">Nome do Responsável *</IonLabel>
                         <IonInput
@@ -179,6 +216,35 @@ const CalendarPage: React.FC = () => {
                           placeholder="Sua empresa (opcional)"
                         />
                       </IonItem>
+
+                      <IonItem>
+                        <IonLabel position="stacked">Tipo de Instituição *</IonLabel>
+                        <IonInput
+                          value={institutionType}
+                          onIonChange={(e) => setInstitutionType(e.detail.value!)}
+                          placeholder="Escola, Empresa, ONG..."
+                        />
+                      </IonItem>
+
+                      <IonItem>
+                        <IonLabel position="stacked">Quantidade de Participantes *</IonLabel>
+                        <IonInput
+                          type="number"
+                          value={participants}
+                          onIonChange={(e) => setParticipants(e.detail.value!)}
+                          placeholder="Ex: 50"
+                        />
+                      </IonItem>
+
+                      <IonItem>
+                        <IonLabel position="stacked">Local da Palestra *</IonLabel>
+                        <IonInput
+                          value={address}
+                          onIonChange={(e) => setAddress(e.detail.value!)}
+                          placeholder="Rua, número e bairro"
+                        />
+                      </IonItem>
+
                       <IonItem>
                         <IonLabel position="stacked">Email *</IonLabel>
                         <IonInput

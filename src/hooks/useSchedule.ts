@@ -21,6 +21,7 @@ export const useAvailabilityRules = () => {
 
   const saveRule = async (index: number) => {
     const rule = rules[index];
+
     try {
       if (rule.id) {
         await scheduleService.updateRule(rule.id, rule);
@@ -30,8 +31,14 @@ export const useAvailabilityRules = () => {
         updatedRules[index] = newRule;
         setRules(updatedRules);
       }
-    } catch (error) {
-      throw new Error("Erro ao salvar regra.");
+    } catch (error: any) {
+      console.error("ERRO AO SALVAR REGRA:", error);
+
+      if (error?.message) {
+        throw new Error(error.message);
+      }
+
+      throw error;
     }
   };
 
