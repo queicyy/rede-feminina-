@@ -17,7 +17,7 @@ export default function AppLayout({
 }: {
   title: string;
   children: React.ReactNode;
-  showBack: boolean;
+  showBack?: boolean;
   history?: any;
 }) {
   return (
