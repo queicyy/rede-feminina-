@@ -16,7 +16,7 @@ const Riscos: React.FC = () => {
   const history = useHistory()
 
   return (
-    <AppLayout title='Riscos' history={history}>
+    <AppLayout title='Riscos' history={history} showBack={true}>
       <IonContent>
         <ContentBox>
           <p>

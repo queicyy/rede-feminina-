@@ -89,7 +89,7 @@ const SinasSintomas: React.FC = () => {
   }
 
   return (
-    <AppLayout title="Sinais e Sintomas" history={history}> {}
+    <AppLayout title="Sinais e Sintomas" history={history} showBack={true}>
       <IonContent>
         {loading ? (
           <LoadingContainer>

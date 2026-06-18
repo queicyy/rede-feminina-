@@ -46,7 +46,7 @@ const PrevencaoColoUtero: React.FC = () => {
 
 
   return (
-    <AppLayout title='Prevenção/Diagnóstico' history={history}>
+    <AppLayout title='Prevenção/Diagnóstico' history={history}showBack={true}>
       <IonContent>
         {loading ? (
           <LoadingContainer>

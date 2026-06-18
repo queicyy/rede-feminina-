@@ -57,7 +57,7 @@ const FatoresRisco: React.FC = () => {
   }, []);
 
   return (
-    <AppLayout title='Fatores de Risco' history={history}>
+    <AppLayout title='Fatores de Risco' history={history} showBack={true}>
       <IonContent>
         {loading ? (
           <LoadingContainer>

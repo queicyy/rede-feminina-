@@ -49,7 +49,7 @@ const FatoresProtecaoColoUtero: React.FC = () => {
 
 
   return (
-    <AppLayout title='O que é o Preventivo' history={history}>
+    <AppLayout title='O que é o Preventivo' history={history}showBack={true}>
       <IonContent>
         {loading ? (
           <LoadingContainer>

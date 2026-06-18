@@ -21,7 +21,7 @@ const SinaisSintomasColoUtero: React.FC = () => {
   const history = useHistory()
 
   return (
-    <AppLayout title='Sinais e Sintomas' history={history}>
+    <AppLayout title='Sinais e Sintomas' history={history}showBack={true}>
       <IonContent>
         <ContentBox>
           <p>

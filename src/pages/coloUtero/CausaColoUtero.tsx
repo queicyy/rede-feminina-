@@ -45,7 +45,7 @@ const CausaColoUtero: React.FC = () => {
   }, []);
 
   return (
-    <AppLayout title="Causa" history={history}>
+    <AppLayout title="Causa" history={history}showBack={true}>
       <IonContent>
         {loading ? (
           <LoadingContainer>

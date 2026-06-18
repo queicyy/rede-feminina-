@@ -162,7 +162,7 @@ const FormCancerMama: React.FC = () => {
   }
 
   return (
-    <AppLayout title='Orientações para o Exame' history={history}>
+    <AppLayout title='Orientações para o Exame' history={history} showBack={true}>
       <IonContent>
         {loading ? (
           <LoadingContainer>

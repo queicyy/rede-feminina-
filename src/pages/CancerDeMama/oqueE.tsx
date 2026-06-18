@@ -48,7 +48,7 @@ const OqueE: React.FC = () => {
   }, [])
 
   return (
-    <AppLayout title='O que é' history={history}>
+    <AppLayout title='O que é' history={history} showBack={true}>
       <IonContent>
         {loading ? (
           <LoadingContainer>

@@ -57,7 +57,7 @@ const FatoresProtecao: React.FC = () => {
   }, []);
 
   return (
-    <AppLayout title="Fatores de Proteção" history={history}>
+    <AppLayout title="Fatores de Proteção" history={history} showBack={true}>
       <IonContent>
         {loading ? (
           <LoadingContainer>

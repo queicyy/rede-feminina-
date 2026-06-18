@@ -1,13 +1,29 @@
-import { IonPage, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonContent } from "@ionic/react";
+import {
+  IonPage,
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonMenuButton,
+  IonTitle,
+  IonContent,
+  IonBackButton,
+} from "@ionic/react";
+import { chevronBack } from "ionicons/icons";
 
-export default function AppLayout({ title, children }: { title: string; children: React.ReactNode; history: any }) {
+export default function AppLayout({
+  title,
+  children,
+  showBack = false,
+}: {
+  title: string;
+  children: React.ReactNode;
+  showBack: boolean;
+}) {
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="start">
-            <IonMenuButton />
-          </IonButtons>
+          <IonButtons slot="start">{showBack ? <IonBackButton icon={chevronBack} /> : <IonMenuButton />}</IonButtons>
           <IonTitle>{title}</IonTitle>
         </IonToolbar>
       </IonHeader>
@@ -16,4 +32,3 @@ export default function AppLayout({ title, children }: { title: string; children
     </IonPage>
   );
 }
-  
