@@ -18,6 +18,7 @@ export default function AppLayout({
   title: string;
   children: React.ReactNode;
   showBack: boolean;
+  history?: any;
 }) {
   return (
     <IonPage>
