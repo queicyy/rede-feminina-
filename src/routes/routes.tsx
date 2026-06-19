@@ -1,3 +1,6 @@
+import AdminEventos from "../pages/Admin/Eventos/AdminEventos";
+import EventosPage from "../pages/Eventos/Eventos";
+import AdminNoticias from "../pages/Admin/Noticias/AdminNoticias";
 import React from "react";
 import { Route, Redirect } from "react-router";
 import { useFirebase } from "../FirebaseContext";
@@ -154,6 +157,24 @@ const AppRoutes: React.FC = () => {
         render={() => {
           if (isLoading) return null;
           return user ? <AvailabilityConfig /> : <Redirect to="/login" />;
+        }}
+      />
+      <Route path="/eventos">
+        <EventosPage />
+      </Route>
+
+      <Route
+        path="/admin/eventos"
+        render={() => {
+          if (isLoading) return null;
+          return user ? <AdminEventos /> : <Redirect to="/login" />;
+        }}
+      />
+      <Route
+        path="/admin/noticias"
+        render={() => {
+          if (isLoading) return null;
+          return user ? <AdminNoticias /> : <Redirect to="/login" />;
         }}
       />
     </>

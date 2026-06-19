@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, IonInput, IonSpinner } from "@ionic/react";
-import { loginUser, registerUser, loginUserWithGoogle } from "../../services/authService";
+import { loginUser } from "../../services/authService";
 import { useFirebase } from "../../FirebaseContext";
 import styled from "styled-components";
 import logoImage from "/assets/images/logo_rfcc.png";
 import { useHistory } from "react-router";
 
 const StyledIonButton = styled(IonButton)`
-  --background: #ffc0cb !important;
+  --background: #d81b60 !important;
   --background-activated: none;
   --background-focused: none;
   --background-hover: none;
-  color: var(--ion-color-primary-text);
+  color: white;
   margin-bottom: 10px;
   &:hover {
     transform: scale(1.05);
@@ -22,7 +22,7 @@ const StyledLogoImage = styled.img`
   max-width: 100%;
   height: auto;
   display: block;
-  margin: 0 auto; /* Centraliza horizontalmente */
+  margin: 0 auto 30px auto;
 `;
 
 const CenteredMessage = styled.div`
@@ -32,8 +32,8 @@ const CenteredMessage = styled.div`
   transform: translate(-50%, -50%);
   background-color: white;
   padding: 20px;
-  width: 80%; /* Aumenta a largura para 80% */
-  max-width: 500px; /* Limita a largura máxima */
+  width: 80%;
+  max-width: 500px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
@@ -74,7 +74,7 @@ const Login: React.FC = () => {
     setShowToast(false);
 
     if (!validateEmail(email) || !validatePassword(password)) {
-      setToastMessage("Por favor, informe um email e senha válidos.");
+      setToastMessage("Acesso não autorizado. Você não tem permissão para acessar esta área.");
       setShowToast(true);
       return;
     }
@@ -83,17 +83,7 @@ const Login: React.FC = () => {
       const result = await loginUser(email, password);
 
       if ("error" in result) {
-        const errorCode = result.error.code;
-
-        if (errorCode === "auth/user-not-found") {
-          setToastMessage("Usuário Não Encontrado.");
-        } else if (errorCode === "auth/wrong-password") {
-          setToastMessage("Senha Incorreta.");
-        } else if (errorCode === "auth/invalid-credential") {
-          setToastMessage("Credenciais Inválidas.");
-        } else {
-          setToastMessage("Erro ao Realizar Login.");
-        }
+        setToastMessage("Acesso não autorizado. Você não tem permissão para acessar esta área.");
         setShowToast(true);
       } else {
         setUser(result.user);
@@ -101,59 +91,10 @@ const Login: React.FC = () => {
       }
     } catch (error) {
       console.error("Erro ao tentar fazer login:", error);
-      setToastMessage("Erro ao tentar fazer login. Por favor, tente novamente.");
+      setToastMessage("Acesso não autorizado. Você não tem permissão para acessar esta área.");
       setShowToast(true);
     }
   };
-
-  const handleRegister = async () => {
-    setShowToast(false);
-
-    if (!validateEmail(email) || !validatePassword(password)) {
-      setToastMessage("Por favor, informe um email e senha válidos.");
-      setShowToast(true);
-      return;
-    }
-    try {
-      const result = await registerUser(email, password);
-      if ("error" in result) {
-        const errorCode = result.error.code;
-        if (errorCode === "auth/email-already-in-use") {
-          setToastMessage("Email já cadastrado.");
-        } else {
-          setToastMessage("Erro ao Cadastrar Usuário");
-        }
-        setShowToast(true);
-      } else {
-        setUser(result.user);
-        history.push("/");
-      }
-    } catch (error) {
-      console.error("Erro ao tentar cadastrar usuário:", error);
-      setToastMessage("Erro ao tentar realizar o cadastro. Por favor, tente novamente.");
-      setShowToast(true);
-    }
-  };
-
-  // deprecated - Google login is currently disabled due to issues with the Firebase configuration. Please use email and password login for now.
-
-  // const handleGoogleLogin = async () => {
-  //   try {
-  //     const result = await loginUserWithGoogle();
-
-  //     if ('error' in result) {
-  //       setToastMessage('Erro ao Realizar Login com Google.');
-  //       setShowToast(true);
-  //     } else {
-  //       setUser(result.user);
-  //       history.push('/');
-  //     }
-  //   } catch (error) {
-  //     console.error('Erro ao tentar fazer login com Google:', error);
-  //     setToastMessage('Erro ao tentar fazer login com Google. Por favor, tente novamente.');
-  //     setShowToast(true);
-  //   }
-  // };
 
   if (isLoading) {
     return (
@@ -178,13 +119,17 @@ const Login: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Login</IonTitle>
+          <IonTitle>Área Administrativa</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
         <StyledLogoImage width={"150px"} src={logoImage} alt="Logo RFCC" />
 
-        <IonInput value={email} placeholder="Email" onIonChange={(e) => setEmail(e.detail.value!)} />
+        <IonInput
+          value={email}
+          placeholder="Email"
+          onIonChange={(e) => setEmail(e.detail.value!)}
+        />
         <IonInput
           type="password"
           value={password}
@@ -192,14 +137,9 @@ const Login: React.FC = () => {
           onIonChange={(e) => setPassword(e.detail.value!)}
         />
         <StyledIonButton expand="block" onClick={handleLogin}>
-          Login
+          Entrar
         </StyledIonButton>
-        <StyledIonButton expand="block" onClick={handleRegister}>
-          Registrar
-        </StyledIonButton>
-        {/* <StyledIonButton expand="block" onClick={handleGoogleLogin}>
-          Login com Google
-        </StyledIonButton> */}
+
         {showToast && (
           <CenteredMessage>
             {toastMessage}

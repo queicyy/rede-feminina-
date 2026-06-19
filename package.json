@@ -29,7 +29,8 @@
     "react-icons": "^5.2.1",
     "react-router": "^5.3.4",
     "react-router-dom": "^5.3.4",
-    "styled-components": "^6.1.11"
+    "styled-components": "^6.1.11",
+    "swiper": "^12.2.0"
   },
   "devDependencies": {
     "@capacitor/cli": "6.0.0",

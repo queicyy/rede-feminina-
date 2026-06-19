@@ -7,7 +7,6 @@ import {
   IonListHeader,
   IonMenu,
   IonMenuToggle,
-  IonNote,
 } from "@ionic/react";
 
 import { useLocation, useHistory } from "react-router-dom";
@@ -26,13 +25,14 @@ import {
   womanSharp,
   bookOutline,
   bookSharp,
-  enterSharp,
   calendarOutline,
   settingsOutline,
   listOutline,
   logOutOutline,
   cartOutline,
   cartSharp,
+  lockClosedOutline,
+  calendarNumberOutline,
 } from "ionicons/icons";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase/firebase";
@@ -71,8 +71,18 @@ const appPages: AppPage[] = [
     iosIcon: heartOutline,
     mdIcon: heartSharp,
   },
-  { title: "Vitrine Virtual", url: "/mostruario", iosIcon: cartOutline, mdIcon: cartSharp },
-  { title: "Notícias", url: "/noticias", iosIcon: newspaperOutline, mdIcon: newspaperSharp },
+  {
+    title: "Vitrine Virtual",
+    url: "/mostruario",
+    iosIcon: cartOutline,
+    mdIcon: cartSharp,
+  },
+  {
+    title: "Notícias",
+    url: "/noticias",
+    iosIcon: newspaperOutline,
+    mdIcon: newspaperSharp,
+  },
   {
     title: "Exame Preventivo",
     url: "/exame-preventivo",
@@ -97,12 +107,6 @@ const appPages: AppPage[] = [
     iosIcon: helpCircleOutline,
     mdIcon: helpCircleSharp,
   },
-  {
-    title: "Login",
-    url: "/login",
-    iosIcon: mailOutline,
-    mdIcon: enterSharp,
-  },
 ];
 
 const Menu: React.FC = () => {
@@ -113,7 +117,7 @@ const Menu: React.FC = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      history.replace("/login");
+      history.replace("/");
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
     }
@@ -124,34 +128,68 @@ const Menu: React.FC = () => {
       <IonContent>
         <IonList id="inbox-list">
           <IonListHeader>RFCC Itapema</IonListHeader>
-          <IonNote>rfccitapema@outlook.com</IonNote>
-          {appPages
-            .filter((appPage) => {
-              if (appPage.title === "Login" && user) {
-                return false;
-              }
-              return true;
-            })
-            .map((appPage, index) => {
-              return (
-                <IonMenuToggle key={index} autoHide={false}>
-                  <IonItem
-                    className={location.pathname === appPage.url ? "selected" : ""}
-                    routerLink={appPage.url}
-                    routerDirection="none"
-                    lines="none"
-                    detail={false}
-                  >
-                    <IonIcon aria-hidden="true" slot="start" ios={appPage.iosIcon} md={appPage.mdIcon} />
-                    <IonLabel>{appPage.title}</IonLabel>
-                  </IonItem>
-                </IonMenuToggle>
-              );
-            })}
 
+          {/* Menu público */}
+          {appPages.map((appPage, index) => (
+            <IonMenuToggle key={index} autoHide={false}>
+              <IonItem
+                className={location.pathname === appPage.url ? "selected" : ""}
+                routerLink={appPage.url}
+                routerDirection="none"
+                lines="none"
+                detail={false}
+              >
+                <IonIcon aria-hidden="true" slot="start" ios={appPage.iosIcon} md={appPage.mdIcon} />
+                <IonLabel>{appPage.title}</IonLabel>
+              </IonItem>
+            </IonMenuToggle>
+          ))}
+
+          {/* Botão Área Administrativa — aparece para todos */}
+          {!user && (
+            <IonMenuToggle autoHide={false}>
+              <IonItem
+                className={location.pathname === "/login" ? "selected" : ""}
+                routerLink="/login"
+                routerDirection="none"
+                lines="none"
+                detail={false}
+                style={{ marginTop: "20px" }}
+              >
+                <IonIcon aria-hidden="true" slot="start" icon={lockClosedOutline} color="medium" />
+                <IonLabel color="medium">Área Administrativa</IonLabel>
+              </IonItem>
+            </IonMenuToggle>
+          )}
+
+          {/* Menu admin — só aparece quando logado */}
           {user && (
             <>
               <IonListHeader style={{ marginTop: "20px" }}>Administração</IonListHeader>
+              <IonMenuToggle autoHide={false}>
+                <IonItem
+                  className={location.pathname === "/admin/eventos" ? "selected" : ""}
+                  routerLink="/admin/eventos"
+                  routerDirection="none"
+                  lines="none"
+                  detail={false}
+                >
+                  <IonIcon aria-hidden="true" slot="start" icon={calendarNumberOutline} />
+                  <IonLabel>Gerenciar Eventos</IonLabel>
+                </IonItem>
+              </IonMenuToggle>
+              <IonMenuToggle autoHide={false}>
+                <IonItem
+                  className={location.pathname === "/admin/noticias" ? "selected" : ""}
+                  routerLink="/admin/noticias"
+                  routerDirection="none"
+                  lines="none"
+                  detail={false}
+                >
+                  <IonIcon aria-hidden="true" slot="start" icon={newspaperOutline} />
+                  <IonLabel>Gerenciar Notícias</IonLabel>
+                </IonItem>
+              </IonMenuToggle>
               <IonMenuToggle autoHide={false}>
                 <IonItem
                   className={location.pathname === "/admin/agendamentos" ? "selected" : ""}
