@@ -18,7 +18,7 @@ import {
   IonButton,
   IonIcon,
   IonButtons,
-  IonBackButton,
+  IonMenuButton,
 } from "@ionic/react";
 import { logoWhatsapp, closeOutline } from "ionicons/icons";
 import { showroomItems, ShowroomItem } from "../../helpers/showroomData";
@@ -42,7 +42,7 @@ const Mostruario: React.FC = () => {
       <IonHeader>
         <IonToolbar color="">
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/" />
+            <IonMenuButton />
           </IonButtons>
           <IonTitle>Vitrine Virtual</IonTitle>
         </IonToolbar>
@@ -81,86 +81,44 @@ const Mostruario: React.FC = () => {
                       R$ {item.price.toFixed(2).replace(".", ",")}
                     </IonCardSubtitle>
                   </IonCardHeader>
-                  <IonCardContent style={{ flexGrow: 1 }}>
-                    <p
-                      style={{
-                        display: "-webkit-box",
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden",
-                      }}
-                    >
-                      {item.description}
-                    </p>
-                  </IonCardContent>
+                  <IonCardContent style={{ flexGrow: 1 }}>{item.description}</IonCardContent>
                 </IonCard>
               </IonCol>
             ))}
           </IonRow>
         </IonGrid>
 
-        {/* Modal de Detalhes do Produto */}
-        <IonModal isOpen={!!selectedItem} onDidDismiss={() => setSelectedItem(null)}>
-          <IonHeader>
-            <IonToolbar color="">
-              <IonTitle>Detalhes do Item</IonTitle>
-              <IonButtons slot="end">
-                <IonButton onClick={() => setSelectedItem(null)}>
-                  <IonIcon slot="icon-only" icon={closeOutline} />
-                </IonButton>
-              </IonButtons>
-            </IonToolbar>
-          </IonHeader>
-          <IonContent className="ion-padding">
-            {selectedItem && (
-              <div
-                style={{
-                  textAlign: "center",
-                  maxWidth: "600px",
-                  margin: "0 auto",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <img
+        <IonModal isOpen={selectedItem !== null} onDidDismiss={() => setSelectedItem(null)}>
+          {selectedItem && (
+            <>
+              <IonHeader>
+                <IonToolbar>
+                  <IonTitle>{selectedItem.title}</IonTitle>
+                  <IonButtons slot="end">
+                    <IonButton onClick={() => setSelectedItem(null)}>
+                      <IonIcon icon={closeOutline} />
+                    </IonButton>
+                  </IonButtons>
+                </IonToolbar>
+              </IonHeader>
+              <IonContent className="ion-padding">
+                <IonImg
                   src={selectedItem.imageUrl}
                   alt={selectedItem.title}
-                  style={{
-                    borderRadius: "8px",
-                    maxHeight: "220px",
-                    objectFit: "contain",
-                    width: "100%",
-                    marginBottom: "20px",
-                    display: "block",
-                  }}
+                  style={{ height: "300px", objectFit: "contain", marginBottom: "16px" }}
                 />
-
-                <h2 style={{ marginTop: "0" }}>{selectedItem.title}</h2>
-                <h3 style={{ color: "var(--ion-color-success)", fontWeight: "bold", fontSize: "1.5rem" }}>
+                <h2>{selectedItem.title}</h2>
+                <p style={{ fontWeight: "bold", color: "green", fontSize: "1.2rem" }}>
                   R$ {selectedItem.price.toFixed(2).replace(".", ",")}
-                </h3>
-
-                <div
-                  style={{
-                    padding: "15px",
-                    backgroundColor: "#f9f9f9",
-                    borderRadius: "8px",
-                    marginTop: "20px",
-                    marginBottom: "30px",
-                    textAlign: "left",
-                  }}
-                >
-                  <p style={{ fontSize: "1.1rem", lineHeight: "1.6" }}>{selectedItem.description}</p>
-                </div>
-
-                <IonButton expand="block" color="success" size="large" onClick={() => handleOpenWhatsApp(selectedItem)}>
-                  <IonIcon slot="start" icon={logoWhatsapp} />
-                  Comprar pelo WhatsApp
+                </p>
+                <p>{selectedItem.description}</p>
+                <IonButton expand="block" color="success" onClick={() => handleOpenWhatsApp(selectedItem)}>
+                  <IonIcon icon={logoWhatsapp} slot="start" />
+                  Comprar via WhatsApp
                 </IonButton>
-              </div>
-            )}
-          </IonContent>
+              </IonContent>
+            </>
+          )}
         </IonModal>
       </IonContent>
     </IonPage>
