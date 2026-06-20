@@ -15,6 +15,8 @@ import {
   IonIcon,
   IonToast,
   IonSpinner,
+  IonButtons,
+  IonMenuButton,
 } from "@ionic/react";
 import { trashOutline, addOutline } from "ionicons/icons";
 import { useAvailabilityRules } from "../../../hooks/useSchedule";
@@ -90,6 +92,9 @@ const AvailabilityConfig: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar color="">
+          <IonButtons slot="start">
+            <IonMenuButton />
+          </IonButtons>
           <IonTitle>Gerenciar Horários</IonTitle>
         </IonToolbar>
       </IonHeader>

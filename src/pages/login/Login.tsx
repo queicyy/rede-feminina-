@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, IonInput, IonSpinner } from "@ionic/react";
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButton, IonInput, IonSpinner, IonButtons, IonMenuButton, IonIcon } from "@ionic/react";
+import { informationCircleOutline, peopleOutline } from "ionicons/icons";
 import { loginUser } from "../../services/authService";
 import { useFirebase } from "../../FirebaseContext";
 import styled from "styled-components";
@@ -51,6 +52,46 @@ const SpinnerWrapper = styled.div`
   justify-content: center;
   align-items: center;
   height: 100%;
+`;
+
+const AttentionCard = styled.div`
+  background-color: #fdeef4;
+  border: 1px solid #f7c6d7;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 24px;
+`;
+
+const AttentionRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  & + & {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #f7c6d7;
+  }
+`;
+
+const AttentionIcon = styled(IonIcon)`
+  font-size: 22px;
+  color: #d81b60;
+  flex-shrink: 0;
+  margin-top: 2px;
+`;
+
+const AttentionTitle = styled.p`
+  margin: 0 0 4px 0;
+  font-weight: 600;
+  color: #d81b60;
+`;
+
+const AttentionText = styled.p`
+  margin: 0;
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.4;
 `;
 
 const Login: React.FC = () => {
@@ -119,11 +160,33 @@ const Login: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
+          <IonButtons slot="start">
+            <IonMenuButton />
+          </IonButtons>
           <IonTitle>Área Administrativa</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
         <StyledLogoImage width={"150px"} src={logoImage} alt="Logo RFCC" />
+
+        <AttentionCard>
+          <AttentionRow>
+            <AttentionIcon icon={informationCircleOutline} />
+            <div>
+              <AttentionTitle>Atenção</AttentionTitle>
+              <AttentionText>
+                Você não precisa fazer login para acessar notícias, informações sobre prevenção, orientações ou
+                demais conteúdos da RFCC Itapema.
+              </AttentionText>
+            </div>
+          </AttentionRow>
+          <AttentionRow>
+            <AttentionIcon icon={peopleOutline} />
+            <AttentionText>
+              Esta área é destinada exclusivamente à equipe responsável pela administração do aplicativo.
+            </AttentionText>
+          </AttentionRow>
+        </AttentionCard>
 
         <IonInput
           value={email}

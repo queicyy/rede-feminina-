@@ -14,6 +14,8 @@ import {
   IonModal,
   IonTextarea,
   IonToast,
+  IonButtons,
+  IonMenuButton,
 } from "@ionic/react";
 import { useDashboardBookings } from "../../../hooks/useSchedule";
 import { Booking } from "../../../types/schedule.types";
@@ -59,6 +61,9 @@ const AgendamentosDashboard: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar color="">
+          <IonButtons slot="start">
+            <IonMenuButton />
+          </IonButtons>
           <IonTitle>Solicitações de Agendamento</IonTitle>
         </IonToolbar>
       </IonHeader>

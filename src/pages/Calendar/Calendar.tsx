@@ -21,6 +21,8 @@ import {
   IonRow,
   IonCol,
   IonIcon,
+  IonButtons,
+  IonMenuButton,
 } from "@ionic/react";
 import { calendarOutline, timeOutline, checkmarkCircleOutline } from "ionicons/icons";
 import { useCalendarSlots } from "../../hooks/useSchedule";
@@ -92,6 +94,9 @@ const CalendarPage: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar color="">
+          <IonButtons slot="start">
+            <IonMenuButton />
+          </IonButtons>
           <IonTitle>Solicitar Palestra</IonTitle>
         </IonToolbar>
       </IonHeader>
