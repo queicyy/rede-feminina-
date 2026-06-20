@@ -110,6 +110,15 @@ const EventoMeta = styled.p`
   margin: 0;
 `;
 
+const EditButton = styled.button`
+  background: none;
+  border: none;
+  color: #555;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+`;
+
 const DeleteButton = styled.button`
   background: none;
   border: none;
@@ -148,13 +157,14 @@ const Divider = styled.div`
 
 const AdminEventos: React.FC = () => {
   const history = useHistory();
-  const { getAllEventos, createEvento, deleteEvento } = useEventos();
+  const { getAllEventos, createEvento, updateEvento, deleteEvento } = useEventos();
 
   const [eventos, setEventos] = useState<IEvento[]>([]);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState<{ msg: string; success: boolean } | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
-  const [form, setForm] = useState<IEvento>({
+  const emptyForm: IEvento = {
     titulo: "",
     data: "",
     horario: "",
@@ -163,7 +173,9 @@ const AdminEventos: React.FC = () => {
     preco: "",
     descricao: "",
     imageUrl: "",
-  });
+  };
+
+  const [form, setForm] = useState<IEvento>(emptyForm);
 
   useEffect(() => {
     fetchEventos();
@@ -187,6 +199,26 @@ const AdminEventos: React.FC = () => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleEditClick = (evento: IEvento) => {
+    setEditingId(evento.id!);
+    setForm({
+      titulo: evento.titulo || "",
+      data: evento.data || "",
+      horario: evento.horario || "",
+      local: evento.local || "",
+      endereco: evento.endereco || "",
+      preco: evento.preco || "",
+      descricao: evento.descricao || "",
+      imageUrl: evento.imageUrl || "",
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setForm(emptyForm);
+  };
+
   const handleSave = async () => {
     if (!form.titulo || !form.data || !form.local) {
       showToast("Preencha título, data e local!", false);
@@ -194,12 +226,18 @@ const AdminEventos: React.FC = () => {
     }
     setLoading(true);
     try {
-      await createEvento(form);
-      showToast("Evento criado com sucesso!", true);
-      setForm({ titulo: "", data: "", horario: "", local: "", endereco: "", preco: "", descricao: "", imageUrl: "" });
+      if (editingId) {
+        await updateEvento(editingId, form);
+        showToast("Evento atualizado com sucesso!", true);
+      } else {
+        await createEvento(form);
+        showToast("Evento criado com sucesso!", true);
+      }
+      setEditingId(null);
+      setForm(emptyForm);
       fetchEventos();
     } catch {
-      showToast("Erro ao criar evento", false);
+      showToast(editingId ? "Erro ao atualizar evento" : "Erro ao criar evento", false);
     } finally {
       setLoading(false);
     }
@@ -210,6 +248,7 @@ const AdminEventos: React.FC = () => {
     try {
       await deleteEvento(id);
       showToast("Evento excluído!", true);
+      if (editingId === id) handleCancelEdit();
       fetchEventos();
     } catch {
       showToast("Erro ao excluir evento", false);
@@ -219,7 +258,7 @@ const AdminEventos: React.FC = () => {
   return (
     <AppLayout title="Admin — Eventos" history={history}>
       <Container>
-        <Title>Gerenciar Eventos</Title>
+        <Title>{editingId ? "Editar Evento" : "Gerenciar Eventos"}</Title>
         <Form>
           <Input placeholder="Título do evento *" value={form.titulo} onChange={(e) => handleChange("titulo", e.target.value)} />
           <Input placeholder="Data * (ex: 23 de Maio de 2026)" value={form.data} onChange={(e) => handleChange("data", e.target.value)} />
@@ -230,8 +269,13 @@ const AdminEventos: React.FC = () => {
           <Input placeholder="URL da imagem" value={form.imageUrl} onChange={(e) => handleChange("imageUrl", e.target.value)} />
           <Textarea placeholder="Descrição do evento" value={form.descricao} onChange={(e) => handleChange("descricao", e.target.value)} />
           <Button onClick={handleSave} disabled={loading}>
-            {loading ? "Salvando..." : "Salvar Evento"}
+            {loading ? "Salvando..." : editingId ? "Atualizar Evento" : "Salvar Evento"}
           </Button>
+          {editingId && (
+            <Button type="button" onClick={handleCancelEdit} style={{ background: "#999" }}>
+              Cancelar Edição
+            </Button>
+          )}
         </Form>
         <Divider />
         <SectionTitle>Eventos Cadastrados ({eventos.length})</SectionTitle>
@@ -247,6 +291,7 @@ const AdminEventos: React.FC = () => {
                 <EventoMeta>{evento.local}</EventoMeta>
                 {evento.preco && <EventoMeta style={{ color: "#d81b60", fontWeight: 600 }}>{evento.preco}</EventoMeta>}
               </EventoInfo>
+              <EditButton onClick={() => handleEditClick(evento)}>✏️</EditButton>
               <DeleteButton onClick={() => handleDelete(evento.id!)}>🗑️</DeleteButton>
             </EventoCard>
           ))

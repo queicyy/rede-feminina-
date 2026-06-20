@@ -1,4 +1,5 @@
 import { eventosService } from "../services/eventos.service";
+import { IEvento } from "../types/eventos.types";
 
 const useEventos = () => {
   const getAllEventos = async () => {
@@ -11,6 +12,10 @@ const useEventos = () => {
     return response;
   };
 
+  const updateEvento = async (id: string, evento: Partial<IEvento>) => {
+    await eventosService.updateEvento(id, evento);
+  };
+
   const deleteEvento = async (id: string) => {
     await eventosService.deleteEvento(id);
   };
@@ -18,6 +23,7 @@ const useEventos = () => {
   return {
     getAllEventos,
     createEvento,
+    updateEvento,
     deleteEvento,
   };
 };

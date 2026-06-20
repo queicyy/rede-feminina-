@@ -1,4 +1,4 @@
-import { collection, getDocs, addDoc, deleteDoc, doc, orderBy, query } from "firebase/firestore";
+import { collection, getDocs, addDoc, deleteDoc, updateDoc, doc, orderBy, query } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 import { IEvento } from "../types/eventos.types";
 
@@ -30,6 +30,17 @@ export const eventosService = {
     } catch (error) {
       console.error("Erro ao criar evento:", error);
       throw new Error("Falha ao criar evento");
+    }
+  },
+
+  updateEvento: async (id: string, evento: Partial<IEvento>): Promise<void> => {
+    try {
+      const eventoDoc = doc(firestore, "eventos", id);
+      const { id: _ignoreId, ...dataToUpdate } = evento as IEvento;
+      await updateDoc(eventoDoc, { ...dataToUpdate });
+    } catch (error) {
+      console.error("Erro ao atualizar evento:", error);
+      throw new Error("Falha ao atualizar evento");
     }
   },
 
