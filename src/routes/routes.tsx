@@ -31,6 +31,8 @@ import AvailabilityConfig from "../pages/Admin/Agendamentos/Availability";
 import AgendamentosDashboard from "../pages/Admin/Agendamentos/Dashboard";
 import Mostruario from "../pages/Mostruario/Mostruario";
 import AdminVitrine from "../pages/Admin/Vitrine/AdminVitrine";
+import AdminAgenda from "../pages/Admin/Agenda/AdminAgenda";
+import Agenda from "../pages/Agenda/Agenda";
 
 const AppRoutes: React.FC = () => {
   const { user, isLoading } = useFirebase();
@@ -185,6 +187,16 @@ const AppRoutes: React.FC = () => {
           return user ? <AdminVitrine /> : <Redirect to="/login" />;
         }}
       />
+      <Route
+        path="/admin/agenda"
+        render={() => {
+          if (isLoading) return null;
+          return user ? <AdminAgenda /> : <Redirect to="/login" />;
+        }}
+      />
+      <Route path="/agenda">
+        <Agenda />
+      </Route>
     </>
   );
 };

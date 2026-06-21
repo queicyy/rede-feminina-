@@ -192,6 +192,18 @@ const Menu: React.FC = () => {
               </IonMenuToggle>
               <IonMenuToggle autoHide={false}>
                 <IonItem
+                  className={location.pathname === "/admin/agenda" ? "selected" : ""}
+                  routerLink="/admin/agenda"
+                  routerDirection="none"
+                  lines="none"
+                  detail={false}
+                >
+                  <IonIcon aria-hidden="true" slot="start" icon={calendarNumberOutline} />
+                  <IonLabel>Gerenciar Agenda da Rede</IonLabel>
+                </IonItem>
+              </IonMenuToggle>
+              <IonMenuToggle autoHide={false}>
+                <IonItem
                   className={location.pathname === "/admin/noticias" ? "selected" : ""}
                   routerLink="/admin/noticias"
                   routerDirection="none"
