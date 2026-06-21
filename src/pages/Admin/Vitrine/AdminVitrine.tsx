@@ -88,7 +88,8 @@ const PhotoPicker = styled.button`
 const PhotoPreview = styled.img`
   width: 100%;
   max-height: 220px;
-  object-fit: cover;
+  object-fit: contain;
+  background: #f4f4f4;
   border-radius: 10px;
 `;
 
