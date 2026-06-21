@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import AppLayout from "../../../components/appLayout";
 import { useHistory } from "react-router-dom";
 import useEventos from "../../../hooks/useEventos";
+import { imgbbService } from "../../../services/imgbb.service";
 import { IEvento } from "../../../types/eventos.types";
 
 const Container = styled.div`
@@ -52,6 +53,35 @@ const Textarea = styled.textarea`
   &:focus {
     border-color: #d81b60;
   }
+`;
+
+const PhotoPicker = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 24px;
+  border: 2px dashed #d81b60;
+  border-radius: 10px;
+  background: #fdeef4;
+  color: #b8005c;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
+const PhotoPreview = styled.img`
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  background: #f4f4f4;
+  border-radius: 10px;
 `;
 
 const Button = styled.button`
@@ -154,15 +184,17 @@ const Divider = styled.div`
   background: #eee;
   margin: 24px 0;
 `;
-
 const AdminEventos: React.FC = () => {
   const history = useHistory();
   const { getAllEventos, createEvento, updateEvento, deleteEvento } = useEventos();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [eventos, setEventos] = useState<IEvento[]>([]);
   const [loading, setLoading] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [toast, setToast] = useState<{ msg: string; success: boolean } | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string>("");
 
   const emptyForm: IEvento = {
     titulo: "",
@@ -199,6 +231,24 @@ const AdminEventos: React.FC = () => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setPhotoPreview(URL.createObjectURL(file));
+    setUploadingPhoto(true);
+    try {
+      const url = await imgbbService.uploadImage(file);
+      setForm((prev) => ({ ...prev, imageUrl: url }));
+      showToast("Foto enviada com sucesso!", true);
+    } catch {
+      showToast("Erro ao enviar a foto. Tente novamente.", false);
+      setPhotoPreview("");
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
   const handleEditClick = (evento: IEvento) => {
     setEditingId(evento.id!);
     setForm({
@@ -211,12 +261,14 @@ const AdminEventos: React.FC = () => {
       descricao: evento.descricao || "",
       imageUrl: evento.imageUrl || "",
     });
+    setPhotoPreview(evento.imageUrl || "");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleCancelEdit = () => {
     setEditingId(null);
     setForm(emptyForm);
+    setPhotoPreview("");
   };
 
   const handleSave = async () => {
@@ -235,6 +287,7 @@ const AdminEventos: React.FC = () => {
       }
       setEditingId(null);
       setForm(emptyForm);
+      setPhotoPreview("");
       fetchEventos();
     } catch {
       showToast(editingId ? "Erro ao atualizar evento" : "Erro ao criar evento", false);
@@ -266,9 +319,23 @@ const AdminEventos: React.FC = () => {
           <Input placeholder="Local *" value={form.local} onChange={(e) => handleChange("local", e.target.value)} />
           <Input placeholder="Endereço" value={form.endereco} onChange={(e) => handleChange("endereco", e.target.value)} />
           <Input placeholder="Preço (ex: R$ 120,00)" value={form.preco} onChange={(e) => handleChange("preco", e.target.value)} />
-          <Input placeholder="URL da imagem" value={form.imageUrl} onChange={(e) => handleChange("imageUrl", e.target.value)} />
           <Textarea placeholder="Descrição do evento" value={form.descricao} onChange={(e) => handleChange("descricao", e.target.value)} />
-          <Button onClick={handleSave} disabled={loading}>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={handlePhotoSelect}
+          />
+
+          {photoPreview ? <PhotoPreview src={photoPreview} alt="Pré-visualização" /> : null}
+
+          <PhotoPicker type="button" onClick={() => fileInputRef.current?.click()} disabled={uploadingPhoto}>
+            {uploadingPhoto ? "Enviando foto..." : photoPreview ? "Trocar foto" : "Selecionar foto"}
+          </PhotoPicker>
+
+          <Button onClick={handleSave} disabled={loading || uploadingPhoto}>
             {loading ? "Salvando..." : editingId ? "Atualizar Evento" : "Salvar Evento"}
           </Button>
           {editingId && (
