@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { IonIcon } from "@ionic/react";
+import { calendarOutline } from "ionicons/icons";
 import AppLayout from "../../components/appLayout";
 import { useHistory } from "react-router-dom";
 import useEventos from "../../hooks/useEventos";
@@ -145,8 +147,11 @@ const EventosPage: React.FC = () => {
                 <EventoTitulo>{evento.titulo}</EventoTitulo>
                 <EventoInfo>
                   {evento.data && (
-                    <EventoMeta>📅 {evento.data}{evento.horario ? ` • ${evento.horario}` : ""}</EventoMeta>
-                  )}
+                    <EventoMeta>
+                    <IonIcon icon={calendarOutline} style={{ flexShrink: 0 }} />
+                    {evento.data}{evento.horario ? ` • ${evento.horario}` : ""}
+                    </EventoMeta>
+)}
                   {evento.local && <EventoMeta>📍 {evento.local}</EventoMeta>}
                   {evento.endereco && <EventoMeta>🗺️ {evento.endereco}</EventoMeta>}
                 </EventoInfo>

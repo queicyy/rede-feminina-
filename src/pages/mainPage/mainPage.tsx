@@ -27,6 +27,8 @@ import {
   ViewAllLink,
 } from "./styles";
 import AppLayout from "../../components/appLayout";
+import { IonIcon } from "@ionic/react";
+import { calendarOutline } from "ionicons/icons";
 import { Fragment, useEffect, useState } from "react";
 import useCardsMain from "../../hooks/useCardsMain/useCardsMain";
 import { ICardsMain } from "./types";
@@ -134,9 +136,10 @@ export default function MainPage() {
             <SectionLine style={{ margin: "0 0 16px 16px" }} />
 
             <QuickAccess>
-              <QuickCard onClick={() => history.push("/agenda")}>
-                📅<span>Agenda da Rede</span>
-              </QuickCard>
+            <QuickCard onClick={() => history.push("/agenda")}>
+  <IonIcon icon={calendarOutline} />
+  <span>Agenda da Rede</span>
+</QuickCard>
               <QuickCard onClick={() => history.push("/noticias")}>
                 📰<span>Notícias</span>
               </QuickCard>
@@ -187,7 +190,7 @@ export default function MainPage() {
                       </EventMeta>
                     )}
                   </EventInfo>
-                  <span style={{ color: "#d81b60", fontSize: "20px" }}>📅</span>
+                  <IonIcon icon={calendarOutline} style={{ color: "#d81b60", fontSize: "20px" }} />
                 </EventCard>
               ))
             )}

@@ -72,7 +72,7 @@ const appPages: AppPage[] = [
     mdIcon: heartSharp,
   },
   {
-    title: "Vitrine Virtual",
+    title: "Bazar Chic e Artesanato",
     url: "/mostruario",
     iosIcon: cartOutline,
     mdIcon: cartSharp,
@@ -176,6 +176,18 @@ const Menu: React.FC = () => {
                 >
                   <IonIcon aria-hidden="true" slot="start" icon={calendarNumberOutline} />
                   <IonLabel>Gerenciar Eventos</IonLabel>
+                </IonItem>
+              </IonMenuToggle>
+              <IonMenuToggle autoHide={false}>
+                <IonItem
+                  className={location.pathname === "/admin/vitrine" ? "selected" : ""}
+                  routerLink="/admin/vitrine"
+                  routerDirection="none"
+                  lines="none"
+                  detail={false}
+                >
+                  <IonIcon aria-hidden="true" slot="start" icon={cartOutline} />
+                  <IonLabel>Gerenciar Bazar Chic e Artesanato</IonLabel>
                 </IonItem>
               </IonMenuToggle>
               <IonMenuToggle autoHide={false}>
