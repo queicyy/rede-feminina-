@@ -1,137 +1,110 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import AppLayout from "../../components/appLayout";
 import { useHistory } from "react-router-dom";
-import { FaCalendarAlt, FaRegNewspaper } from "react-icons/fa";
+import { IonSpinner } from "@ionic/react";
 
 import useNoticias from "../../hooks/useNoticias";
 import { INews } from "../../types/noticias.types";
 
 const fadeIn = keyframes`
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 `;
 
 const NewsContainer = styled.div`
   padding: 20px;
-  background-color: #fff;
-  animation: ${fadeIn} 1s ease-in;
+  animation: ${fadeIn} 0.6s ease-in;
 `;
 
-const NewsItem = styled.div`
-  background: #ffc0cb;
-  padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
+const NewsCard = styled.div`
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+  overflow: hidden;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: transform 0.2s ease;
   &:hover {
-    transform: scale(1.05);
+    transform: translateY(-2px);
   }
 `;
 
-// Definindo o tipo para NewsContent
-interface NewsContentProps {
-  isOpen: boolean;
-}
+const NewsImage = styled.img`
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  background: #ffcbdb;
+`;
 
-const NewsContent = styled.div<NewsContentProps>`
-  display: ${({ isOpen }) => (isOpen ? "block" : "none")};
-  padding: 20px;
-  border-top: 1px solid #ddd;
-  margin-top: 10px;
-  color: #555;
+const NewsBody = styled.div`
+  padding: 16px;
 `;
 
 const NewsTitle = styled.h2`
-  font-size: 24px;
-  margin-bottom: 10px;
-  color: #333;
+  font-size: 17px;
+  font-weight: 700;
+  color: #b8005c;
+  margin: 0 0 6px 0;
 `;
 
 const NewsDate = styled.p`
-  font-size: 14px;
-  color: gray;
-  display: flex;
-  align-items: center;
+  font-size: 13px;
+  color: #999;
+  margin: 0;
 `;
 
-const NewsText = styled.p`
-  font-size: 16px;
-  color: #555;
-`;
-
-const NewsIcon = styled(FaRegNewspaper)`
-  margin-right: 10px;
-  color: #ff69b4;
-`;
-
-const DateIcon = styled(FaCalendarAlt)`
-  margin-right: 5px;
-  color: #ff69b4;
-`;
-
-const NewsScreen = () => {
-  // hooks
+const NoticiasScreen: React.FC = () => {
   const history = useHistory();
   const { allNews } = useNoticias();
+  const [newsData, setNewsData] = useState<INews[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function getNews() {
-      await allNews()
-        .then((response) => setNewsData(response))
-        .catch((error) => {
-          console.error("Error fetching news:", error);
-        });
-    }
-
-    getNews();
+    fetchNews();
   }, []);
 
-  // states
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const [newsData, setNewsData] = useState<INews[]>([]);
-
-  // functions
-  const toggleOpen = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
+  const fetchNews = async () => {
+    setLoading(true);
+    try {
+      const response = await allNews();
+      setNewsData(response);
+    } catch (error) {
+      console.error("Error fetching news:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const renderNews = (news: INews, index: number) => {
-    return (
-      <Fragment key={news.id}>
-        <NewsItem onClick={() => toggleOpen(index)}>
-          <NewsTitle>
-            <NewsIcon />
-            {news.title}
-          </NewsTitle>
-          <NewsDate>
-            <DateIcon />
-            {news.date}
-          </NewsDate>
-          <NewsContent isOpen={openIndex === index}>
-            <NewsText>{news.content}</NewsText>
-          </NewsContent>
-        </NewsItem>
-      </Fragment>
-    );
-  };
-
-  console.log("News:", newsData);
-
-  // render
   return (
-    <AppLayout title='Notícias' history={history}>
-      <NewsContainer>{newsData.length === 0 ? "Carregando..." : newsData.map(renderNews)}</NewsContainer>
+    <AppLayout title="Notícias" history={history}>
+      <NewsContainer>
+        {loading ? (
+          <div style={{ textAlign: "center", marginTop: "40px" }}>
+            <IonSpinner name="crescent" />
+          </div>
+        ) : newsData.length === 0 ? (
+          <p style={{ textAlign: "center", color: "#999" }}>Nenhuma notícia publicada ainda.</p>
+        ) : (
+          newsData.map((news) => (
+            <NewsCard key={news.id} onClick={() => history.push(`/noticias/${news.id}`)}>
+              <NewsImage
+                src={news.imageUrl || "/assets/images/logo_rfcc.png"}
+                alt={news.title}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = "/assets/images/logo_rfcc.png";
+                }}
+              />
+              <NewsBody>
+                <NewsTitle>{news.title}</NewsTitle>
+                <NewsDate>{news.date}</NewsDate>
+              </NewsBody>
+            </NewsCard>
+          ))
+        )}
+      </NewsContainer>
     </AppLayout>
   );
 };
 
-export default NewsScreen;
+export default NoticiasScreen;

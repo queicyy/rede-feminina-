@@ -210,7 +210,7 @@ export default function MainPage() {
               </p>
             ) : (
               newsData.map((news) => (
-                <NewsCard key={news.id} onClick={() => history.push("/noticias")}>
+                <NewsCard key={news.id} onClick={() => history.push(`/noticias/${news.id}`)}>
                   <NewsImage
                     src={news.imageUrl || "/assets/images/logo_rfcc.png"}
                     alt={news.title}

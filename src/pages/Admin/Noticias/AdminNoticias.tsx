@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import AppLayout from "../../../components/appLayout";
 import { useHistory } from "react-router-dom";
-import { collection, addDoc, deleteDoc, doc, getDocs, orderBy, query } from "firebase/firestore";
-import { firestore } from "../../../firebase/firebase";
+import useNoticias from "../../../hooks/useNoticias";
+import { imgbbService } from "../../../services/imgbb.service";
+import MarkdownEditor from "../../../components/common/MarkdownEditor";
 import { INews } from "../../../types/noticias.types";
 
-/* ── Styled Components ── */
 const Container = styled.div`
   padding: 20px;
   max-width: 600px;
@@ -40,20 +40,33 @@ const Input = styled.input`
   }
 `;
 
-const Textarea = styled.textarea`
+const PhotoPicker = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
   width: 100%;
-  padding: 12px 16px;
-  border: 1px solid #ddd;
+  padding: 24px;
+  border: 2px dashed #d81b60;
   border-radius: 10px;
+  background: #fdeef4;
+  color: #b8005c;
   font-size: 14px;
-  outline: none;
-  resize: vertical;
-  min-height: 100px;
-  box-sizing: border-box;
-  font-family: inherit;
-  &:focus {
-    border-color: #d81b60;
+  font-weight: 600;
+  cursor: pointer;
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
+`;
+
+const PhotoPreview = styled.img`
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  background: #f4f4f4;
+  border-radius: 10px;
 `;
 
 const Button = styled.button`
@@ -72,13 +85,22 @@ const Button = styled.button`
 
 const NewsCard = styled.div`
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   padding: 14px;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   margin-bottom: 12px;
+`;
+
+const NewsImage = styled.img`
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #ffcbdb;
+  flex-shrink: 0;
 `;
 
 const NewsInfo = styled.div`
@@ -96,6 +118,15 @@ const NewsMeta = styled.p`
   font-size: 12px;
   color: #666;
   margin: 0;
+`;
+
+const EditButton = styled.button`
+  background: none;
+  border: none;
+  color: #555;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
 `;
 
 const DeleteButton = styled.button`
@@ -133,20 +164,26 @@ const Divider = styled.div`
   background: #eee;
   margin: 24px 0;
 `;
-
-/* ── Componente ── */
 const AdminNoticias: React.FC = () => {
   const history = useHistory();
+  const { allNews, createNoticia, updateNoticia, deleteNoticia } = useNoticias();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [noticias, setNoticias] = useState<INews[]>([]);
   const [loading, setLoading] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [toast, setToast] = useState<{ msg: string; success: boolean } | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string>("");
 
-  const [form, setForm] = useState({
+  const emptyForm: INews = {
     title: "",
     date: "",
     content: "",
     imageUrl: "",
-  });
+  };
+
+  const [form, setForm] = useState<INews>(emptyForm);
 
   useEffect(() => {
     fetchNoticias();
@@ -154,12 +191,7 @@ const AdminNoticias: React.FC = () => {
 
   const fetchNoticias = async () => {
     try {
-      const noticiasCollection = collection(firestore, "noticias");
-      const snapshot = await getDocs(noticiasCollection);
-      const data: INews[] = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as INews[];
+      const data = await allNews();
       setNoticias(data);
     } catch {
       showToast("Erro ao carregar notícias", false);
@@ -171,8 +203,44 @@ const AdminNoticias: React.FC = () => {
     setTimeout(() => setToast(null), 3000);
   };
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: keyof INews, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setPhotoPreview(URL.createObjectURL(file));
+    setUploadingPhoto(true);
+    try {
+      const url = await imgbbService.uploadImage(file);
+      setForm((prev) => ({ ...prev, imageUrl: url }));
+      showToast("Foto enviada com sucesso!", true);
+    } catch {
+      showToast("Erro ao enviar a foto. Tente novamente.", false);
+      setPhotoPreview("");
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  const handleEditClick = (noticia: INews) => {
+    setEditingId(noticia.id!);
+    setForm({
+      title: noticia.title || "",
+      date: noticia.date || "",
+      content: noticia.content || "",
+      imageUrl: noticia.imageUrl || "",
+    });
+    setPhotoPreview(noticia.imageUrl || "");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setForm(emptyForm);
+    setPhotoPreview("");
   };
 
   const handleSave = async () => {
@@ -182,15 +250,19 @@ const AdminNoticias: React.FC = () => {
     }
     setLoading(true);
     try {
-      await addDoc(collection(firestore, "noticias"), {
-        ...form,
-        createdAt: new Date().toISOString(),
-      });
-      showToast("Notícia criada com sucesso!", true);
-      setForm({ title: "", date: "", content: "", imageUrl: "" });
+      if (editingId) {
+        await updateNoticia(editingId, form);
+        showToast("Notícia atualizada com sucesso!", true);
+      } else {
+        await createNoticia(form);
+        showToast("Notícia criada com sucesso!", true);
+      }
+      setEditingId(null);
+      setForm(emptyForm);
+      setPhotoPreview("");
       fetchNoticias();
     } catch {
-      showToast("Erro ao criar notícia", false);
+      showToast(editingId ? "Erro ao atualizar notícia" : "Erro ao criar notícia", false);
     } finally {
       setLoading(false);
     }
@@ -199,8 +271,9 @@ const AdminNoticias: React.FC = () => {
   const handleDelete = async (id: string) => {
     if (!window.confirm("Tem certeza que deseja excluir esta notícia?")) return;
     try {
-      await deleteDoc(doc(firestore, "noticias", id));
+      await deleteNoticia(id);
       showToast("Notícia excluída!", true);
+      if (editingId === id) handleCancelEdit();
       fetchNoticias();
     } catch {
       showToast("Erro ao excluir notícia", false);
@@ -210,7 +283,7 @@ const AdminNoticias: React.FC = () => {
   return (
     <AppLayout title="Admin — Notícias" history={history}>
       <Container>
-        <Title>Gerenciar Notícias</Title>
+        <Title>{editingId ? "Editar Notícia" : "Gerenciar Notícias"}</Title>
 
         <Form>
           <Input
@@ -219,23 +292,39 @@ const AdminNoticias: React.FC = () => {
             onChange={(e) => handleChange("title", e.target.value)}
           />
           <Input
-            placeholder="Data * (ex: 08 de Junho de 2025)"
+            placeholder="Data * (ex: 08 de Junho de 2026)"
             value={form.date}
             onChange={(e) => handleChange("date", e.target.value)}
           />
-          <Input
-            placeholder="URL da imagem (opcional)"
-            value={form.imageUrl}
-            onChange={(e) => handleChange("imageUrl", e.target.value)}
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={handlePhotoSelect}
           />
-          <Textarea
-            placeholder="Conteúdo da notícia *"
+
+          {photoPreview ? <PhotoPreview src={photoPreview} alt="Pré-visualização" /> : null}
+
+          <PhotoPicker type="button" onClick={() => fileInputRef.current?.click()} disabled={uploadingPhoto}>
+            {uploadingPhoto ? "Enviando foto..." : photoPreview ? "Trocar foto" : "Selecionar foto (opcional)"}
+          </PhotoPicker>
+
+          <MarkdownEditor
             value={form.content}
-            onChange={(e) => handleChange("content", e.target.value)}
+            onChange={(value) => handleChange("content", value)}
+            placeholder="Conteúdo da notícia *"
           />
-          <Button onClick={handleSave} disabled={loading}>
-            {loading ? "Salvando..." : "Salvar Notícia"}
+
+          <Button onClick={handleSave} disabled={loading || uploadingPhoto}>
+            {loading ? "Salvando..." : editingId ? "Atualizar Notícia" : "Salvar Notícia"}
           </Button>
+          {editingId && (
+            <Button type="button" onClick={handleCancelEdit} style={{ background: "#999" }}>
+              Cancelar Edição
+            </Button>
+          )}
         </Form>
 
         <Divider />
@@ -247,10 +336,18 @@ const AdminNoticias: React.FC = () => {
         ) : (
           noticias.map((noticia) => (
             <NewsCard key={noticia.id}>
+              <NewsImage
+                src={noticia.imageUrl || "/assets/images/logo_rfcc.png"}
+                alt={noticia.title}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = "/assets/images/logo_rfcc.png";
+                }}
+              />
               <NewsInfo>
                 <NewsTitulo>{noticia.title}</NewsTitulo>
                 <NewsMeta>{noticia.date}</NewsMeta>
               </NewsInfo>
+              <EditButton onClick={() => handleEditClick(noticia)}>✏️</EditButton>
               <DeleteButton onClick={() => handleDelete(noticia.id!)}>🗑️</DeleteButton>
             </NewsCard>
           ))
