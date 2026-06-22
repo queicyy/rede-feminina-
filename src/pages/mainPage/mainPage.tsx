@@ -22,6 +22,7 @@ import {
   NewsDate,
   SobreSection,
   SobreIcon,
+  SobreImage,
   SobreText,
   SobreLink,
   ViewAllLink,
@@ -235,19 +236,18 @@ export default function MainPage() {
             </SectionHeader>
 
             <SobreSection>
-              <SobreIcon>🌸</SobreIcon>
-              <SobreText>
-                A Rede Feminina de Combate ao Câncer de Itapema trabalha desde 2001
-                com acolhimento, prevenção e apoio a mulheres e suas famílias.
-              </SobreText>
-            </SobreSection>
+  <SobreImage src="/assets/images/rede-meninas.png" alt="Equipe RFCC Itapema" />
+  <SobreText>
+    A Rede Feminina de Combate ao Câncer de Itapema trabalha desde 2001
+    com acolhimento, prevenção e apoio a mulheres e suas famílias.
+  </SobreText>
+</SobreSection>
 
             <SobreLink onClick={() => history.push("/sobre")}>
               Saiba mais sobre nós <span>›</span>
             </SobreLink>
 
-            <ContentColumn>{cardsData.map(renderCards)}</ContentColumn>
-
+         
           </WrapperBody>
 
           <Header>

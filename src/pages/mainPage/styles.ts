@@ -389,8 +389,8 @@ export const NewsDate = styled.p`
 /* ── SOBRE ── */
 export const SobreSection = styled.div`
   display: flex;
-  align-items: flex-start;
-  gap: 16px;
+  align-items: center;
+  gap: 14px;
   padding: 0 16px;
   margin-bottom: 8px;
 `;
@@ -400,6 +400,14 @@ export const SobreIcon = styled.div`
   flex-shrink: 0;
 `;
 
+export const SobreImage = styled.img`
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 12px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(216, 27, 96, 0.15);
+`;
 export const SobreText = styled.p`
   font-size: 14px;
   color: #444;
