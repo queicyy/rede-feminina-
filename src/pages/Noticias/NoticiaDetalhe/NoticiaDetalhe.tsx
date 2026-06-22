@@ -18,28 +18,33 @@ import { INews } from "../../../types/noticias.types";
 
 const CoverImage = styled.img`
   width: 100%;
-  max-height: 240px;
-  object-fit: cover;
+  max-height: 300px;
+  object-fit: contain;
   display: block;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(184, 0, 92, 0.15);
+  background: #f5f5f5;
+  margin: 0 auto;
 `;
 
 const ArticleContainer = styled.div`
   padding: 20px;
   max-width: 700px;
   margin: 0 auto;
+  padding-top: 16px;
 `;
 
 const ArticleDate = styled.p`
   font-size: 13px;
   color: #999;
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
 `;
 
 const ArticleTitle = styled.h1`
   font-size: 22px;
   font-weight: 800;
   color: #b8005c;
-  margin: 0 0 20px 0;
+  margin: 0 0 16px 0;
   line-height: 1.3;
 `;
 
@@ -115,7 +120,11 @@ const NoticiaDetalhe: React.FC = () => {
           <p style={{ textAlign: "center", color: "#999", marginTop: "60px" }}>Notícia não encontrada.</p>
         ) : (
           <>
-            {noticia.imageUrl && <CoverImage src={noticia.imageUrl} alt={noticia.title} />}
+            {noticia.imageUrl && (
+              <div style={{ padding: "16px 16px 0 16px" }}>
+                <CoverImage src={noticia.imageUrl} alt={noticia.title} />
+              </div>
+            )}
             <ArticleContainer>
               <ArticleDate>{noticia.date}</ArticleDate>
               <ArticleTitle>{noticia.title}</ArticleTitle>
