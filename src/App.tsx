@@ -4,6 +4,7 @@ import AppRoutes from "./routes/routes";
 import { FirebaseProvider } from "./FirebaseContext";
 
 import Menu from "./components/Menu";
+import AnalyticsTracker from "./components/AnalyticsTracker";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -21,17 +22,6 @@ import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
-
-/* import '@ionic/react/css/palettes/dark.always.css'; */
-/* import '@ionic/react/css/palettes/dark.class.css'; */
-// import '@ionic/react/css/palettes/dark.system.css'
-
 import "./theme.css";
 
 setupIonicReact();
@@ -41,6 +31,7 @@ const App: React.FC = () => {
     <FirebaseProvider>
       <IonApp>
         <IonReactRouter>
+          <AnalyticsTracker />
           <IonSplitPane contentId="main">
             <Menu />
             <IonRouterOutlet id="main">
