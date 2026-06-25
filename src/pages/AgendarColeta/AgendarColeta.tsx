@@ -43,7 +43,7 @@ export default function AgendarColetaScreen() {
               <li>Exceto mulheres que percebam alteração na mama, como:</li>
             </ul>
           </p>
-          <p>*Inchaço ou vermelhidão de toda ou parte de uma mama- mesmo que não sinta um nódulo;</p>
+          <p>*Inchaço ou vermelhidão de toda ou parte de uma mama, mesmo que não sinta um nódulo;</p>
           <p>* Nódulo único endurecido; </p>
           <p>*Irritação ou abaulamento de uma parte da mama;</p>
           <p>* Inversão do mamilo;</p>
