@@ -54,6 +54,19 @@ const AnalyticsTracker: React.FC = () => {
   const location = useLocation();
   const prevPath = useRef<string>("");
 
+  // Rastreia se o app está sendo usado como PWA instalado ou no navegador
+  useEffect(() => {
+    const displayMode = window.matchMedia("(display-mode: standalone)").matches
+      ? "standalone"
+      : "browser";
+
+    if (typeof window.gtag !== "function") return;
+
+    window.gtag("event", "pwa_display_mode", {
+      display_mode: displayMode,
+    });
+  }, []);
+
   useEffect(() => {
     const path = location.pathname;
 
