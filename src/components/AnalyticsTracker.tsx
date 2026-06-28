@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation } from "react-router";
 
 declare global {
@@ -10,10 +10,7 @@ declare global {
 const GA_MEASUREMENT_ID = "G-PZM89D9K8M";
 
 const pageTitles: Record<string, string> = {
-  // Página inicial
   "/": "Página Inicial",
-
-  // Câncer de Mama
   "/cancer/mama": "Câncer de Mama",
   "/cancer/mama/o-que-e": "Câncer de Mama - O que é",
   "/cancer/mama/causa": "Câncer de Mama - Causas",
@@ -22,8 +19,6 @@ const pageTitles: Record<string, string> = {
   "/cancer/mama/prevencao": "Câncer de Mama - Prevenção",
   "/cancer/mama/sinais-sintomas": "Câncer de Mama - Sinais e Sintomas",
   "/cancer/mama/orientacoes": "Câncer de Mama - Orientações",
-
-  // Câncer do Colo do Útero
   "/cancer/colo-utero": "Câncer do Colo do Útero",
   "/cancer/colo-utero/oque-e": "Colo do Útero - O que é",
   "/cancer/colo-utero/causa": "Colo do Útero - Causas",
@@ -32,20 +27,10 @@ const pageTitles: Record<string, string> = {
   "/cancer/colo-utero/preventivo": "Colo do Útero - Preventivo",
   "/cancer/colo-utero/prevencao": "Colo do Útero - Prevenção",
   "/cancer/colo-utero/orientacoes": "Colo do Útero - Orientações",
-
-  // Notícias
   "/noticias": "Notícias",
-
-  // Eventos
   "/eventos": "Eventos",
-
-  // Exame Preventivo
   "/exame-preventivo": "Exame Preventivo",
-
-  // Agendamento
   "/agendar-apresentacao": "Agendar Apresentação",
-
-  // Sobre / Colaborações
   "/sobre": "Sobre a RFCC",
   "/sobre/colaboracoes": "Colaborações",
   "/colabora/pix": "Doação via PIX",
@@ -53,20 +38,10 @@ const pageTitles: Record<string, string> = {
   "/colabora/terapeuta": "Terapeutas Voluntárias",
   "/colabora/brecho": "Brechó",
   "/colabora/artesanato": "Artesanato",
-
-  // Contato
   "/contato": "Contato",
-
-  // Vitrine
   "/mostruario": "Vitrine Digital",
-
-  // Agenda
   "/agenda": "Agenda da Rede",
-
-  // Login
   "/login": "Login",
-
-  // Admin
   "/admin/agendamentos": "Admin - Agendamentos",
   "/admin/agendamento-regras": "Admin - Regras de Disponibilidade",
   "/admin/eventos": "Admin - Eventos",
@@ -77,11 +52,15 @@ const pageTitles: Record<string, string> = {
 
 const AnalyticsTracker: React.FC = () => {
   const location = useLocation();
+  const prevPath = useRef<string>("");
 
   useEffect(() => {
     const path = location.pathname;
 
-    // Busca título exato ou tenta match parcial (ex: /noticias/abc123)
+    // Evita disparar duas vezes na mesma rota
+    if (path === prevPath.current) return;
+    prevPath.current = path;
+
     let title = pageTitles[path];
     if (!title) {
       if (path.startsWith("/noticias/")) {
@@ -91,15 +70,18 @@ const AnalyticsTracker: React.FC = () => {
       }
     }
 
-    // Atualiza o título da aba do navegador
-    document.title = title + " | RFCC Itapema";
+    // Pequeno delay pra garantir que a transição do Ionic terminou
+    setTimeout(() => {
+      document.title = title + " | RFCC Itapema";
 
-    if (typeof window.gtag !== "function") return;
+      if (typeof window.gtag !== "function") return;
 
-    window.gtag("config", GA_MEASUREMENT_ID, {
-      page_path: path + location.search,
-      page_title: title,
-    });
+      window.gtag("config", GA_MEASUREMENT_ID, {
+        page_path: path + location.search,
+        page_title: title,
+      });
+    }, 300);
+
   }, [location]);
 
   return null;
