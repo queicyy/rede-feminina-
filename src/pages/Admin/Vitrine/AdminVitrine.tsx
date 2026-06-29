@@ -358,13 +358,18 @@ const AdminVitrine: React.FC = () => {
             onChange={(e) => handleChange("description", e.target.value)}
           />
 
-          {/* INPUT CORRIGIDO — abre galeria no celular */}
           <input
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            capture={false as any}
-            style={{ display: "none" }}
+            style={{
+              position: "absolute",
+              width: "1px",
+              height: "1px",
+              opacity: 0,
+              overflow: "hidden",
+              zIndex: -1
+            }}
             onChange={handlePhotoSelect}
           />
 

@@ -317,13 +317,18 @@ const AdminEventos: React.FC = () => {
           <Input placeholder="Preço (ex: R$ 120,00)" value={form.preco} onChange={(e) => handleChange("preco", e.target.value)} />
           <Textarea placeholder="Descrição do evento" value={form.descricao} onChange={(e) => handleChange("descricao", e.target.value)} />
 
-          {/* INPUT CORRIGIDO — abre galeria no celular */}
           <input
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            capture={false as any}
-            style={{ display: "none" }}
+            style={{
+              position: "absolute",
+              width: "1px",
+              height: "1px",
+              opacity: 0,
+              overflow: "hidden",
+              zIndex: -1
+            }}
             onChange={handlePhotoSelect}
           />
 
