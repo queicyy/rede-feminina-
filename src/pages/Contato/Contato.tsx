@@ -60,7 +60,7 @@ const Contato: React.FC = () => {
           </WrapperDoacao>
 
           <WrapperSocial>
-            <a href={'https://www.instagram.com/redefemininadeitapema/'} target='_blank'>
+          <a href={'https://www.instagram.com/rede.femininadeitapema/'} target='_blank'>
               <SocialIcon>
                 <FaInstagram fontSize={'35px'} />
               </SocialIcon>
