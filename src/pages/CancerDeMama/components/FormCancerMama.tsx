@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import { IonContent, IonSpinner } from '@ionic/react'
 import styled from 'styled-components'
 import AppLayout from '../../../components/appLayout'
@@ -75,7 +75,6 @@ const Warning = styled.div`
   padding: 25px;
   margin-bottom: 25px;
   width: 80%;
-
 `
 
 const WarningError = styled.div`
@@ -97,18 +96,13 @@ const FormCancerMama: React.FC = () => {
     residencia: '',
     alteracao: '',
   })
-  const [error, setError] = useState({
-    error_idade: false,
-    error_residencia: false,
-    error_alteracao: false,
-  })
   const [mensage, setMensage] = useState<string>('')
   const [mensageError, setMensageError] = useState<string>('')
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const data = await fBuscaInfoPages('sinais_sintomas_colo_utero') // looking for cancerMama's data
+        const data = await fBuscaInfoPages('sinais_sintomas_colo_utero')
         setContentData(data)
       } catch (error) {
         console.error('Erro ao buscar dados do banco:', error)
@@ -116,48 +110,35 @@ const FormCancerMama: React.FC = () => {
         setLoading(false)
       }
     }
-
     fetchData()
   }, [])
 
   const handleChangeDias = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-
     setDataSubmit((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: parseInt(value),
     }))
-
-    if (parseInt(value) > 50 && parseInt(value) < 69) setError({ ...error, error_idade: false })
-    else setError({ ...error, error_idade: true })
   }
-
-  const handleSubmit = (e: any) => {
-    e.preventDefault
-
-    //logic to save in database
-  }
-
-  console.log(dataSubmit)
 
   const validation = () => {
-    if (dataSubmit.alteracao !== '' || dataSubmit.idade !== 0 || dataSubmit.residencia !== '') {
+    const idade = dataSubmit.idade
+    const moraEmItapema = dataSubmit.residencia === 'sim'
+    const temAlteracao = dataSubmit.alteracao === 'sim'
+    const idadeCorreta = idade >= 50 && idade <= 69
+
+    // Apta se: tem alteração (independente de tudo)
+    // OU se: está na faixa de idade E mora em Itapema
+    if (temAlteracao || (idadeCorreta && moraEmItapema)) {
       setMensage(
-        'Você está apta a realizar o exame preventivo de mama (mamografia) anual. Recomendamos procurar um médico para uma avaliação detalhada',
+        'Você está apta a realizar o exame preventivo de mama (mamografia). Recomendamos procurar um médico para agendar sua consulta.'
       )
       setMensageError('')
-    }
-
-    if (error.error_idade && dataSubmit.alteracao !== "sim") {
+    } else {
       setMensage('')
       setMensageError(
-        'Desculpe, você não está apta a realizar o exame preventivo de mama (mamografia) anual no momento. Por favor, siga as orientações e procure um médico se necessário.',
+        'Desculpe, você não está apta a realizar o exame preventivo de mama (mamografia) anual no momento. Por favor, siga as orientações e procure um médico se necessário.'
       )
-    }
-
-    if (!error.error_idade) {
-      setMensage('Você está apta a realizar o exame preventivo de mama (mamografia) anual')
-      setMensageError('')
     }
   }
 
@@ -181,7 +162,7 @@ const FormCancerMama: React.FC = () => {
               <Column>
                 <WrapperOption>
                   <Option>
-                    <input type='number' id={`idade`} name={'idade'} onChange={handleChangeDias} required={true} />
+                    <input type='number' id='idade' name='idade' onChange={handleChangeDias} required={true} />
                   </Option>
                 </WrapperOption>
               </Column>
@@ -194,28 +175,24 @@ const FormCancerMama: React.FC = () => {
                   <Option>
                     <input
                       type='radio'
-                      id={`residencia_sim`}
-                      name={'residencia'}
+                      id='residencia_sim'
+                      name='residencia'
                       value='sim'
-                      onChange={() => {
-                        setDataSubmit({ ...dataSubmit, residencia: 'sim' })
-                      }}
+                      onChange={() => setDataSubmit({ ...dataSubmit, residencia: 'sim' })}
                       required={true}
                     />
-                    <label htmlFor={`residencia_sim`}> Sim</label>
+                    <label htmlFor='residencia_sim'> Sim</label>
                   </Option>
                   <Option>
                     <input
                       type='radio'
-                      id={`residencia_nao`}
-                      name={'residencia'}
+                      id='residencia_nao'
+                      name='residencia'
                       value='nao'
-                      onChange={() => {
-                        setDataSubmit({ ...dataSubmit, residencia: 'nao' })
-                      }}
+                      onChange={() => setDataSubmit({ ...dataSubmit, residencia: 'nao' })}
                       required={true}
                     />
-                    <label htmlFor={`residencia_nao`}> Não</label>
+                    <label htmlFor='residencia_nao'> Não</label>
                   </Option>
                 </WrapperOption>
               </Column>
@@ -238,30 +215,24 @@ const FormCancerMama: React.FC = () => {
                   <Option>
                     <input
                       type='radio'
-                      id={`alteracao_sim`}
-                      name={'alteracao'}
+                      id='alteracao_sim'
+                      name='alteracao'
                       value='sim'
-                      onChange={() => {
-                        setDataSubmit({ ...dataSubmit, alteracao: 'sim' })
-                        setError({ ...error, error_alteracao: true })
-                      }}
+                      onChange={() => setDataSubmit({ ...dataSubmit, alteracao: 'sim' })}
                       required={true}
                     />
-                    <label htmlFor={`alteracao_sim`}> Sim</label>
+                    <label htmlFor='alteracao_sim'> Sim</label>
                   </Option>
                   <Option>
                     <input
                       type='radio'
-                      id={`alteracao_nao`}
-                      name={'alteracao'}
+                      id='alteracao_nao'
+                      name='alteracao'
                       value='nao'
-                      onChange={() => {
-                        setDataSubmit({ ...dataSubmit, alteracao: 'nao' })
-                        setError({ ...error, error_alteracao: false })
-                      }}
+                      onChange={() => setDataSubmit({ ...dataSubmit, alteracao: 'nao' })}
                       required={true}
                     />
-                    <label htmlFor={`alteracao_nao`}> Não</label>
+                    <label htmlFor='alteracao_nao'> Não</label>
                   </Option>
                 </WrapperOption>
               </Column>
