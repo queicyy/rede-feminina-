@@ -127,11 +127,9 @@ const FormCancerMama: React.FC = () => {
     const temAlteracao = dataSubmit.alteracao === 'sim'
     const idadeCorreta = idade >= 50 && idade <= 69
 
-    // Apta se: tem alteração (independente de tudo)
-    // OU se: está na faixa de idade E mora em Itapema
     if (temAlteracao || (idadeCorreta && moraEmItapema)) {
       setMensage(
-        'Você está apta a realizar o exame preventivo de mama (mamografia). Recomendamos procurar um médico para agendar sua consulta.'
+        'Você está apta a realizar o exame preventivo de mama (mamografia). Recomendamos procurar um médico para agendar sua consulta. Não se esqueça de trazer seus documentos: Identidade, CPF e o Cartão do SUS.'
       )
       setMensageError('')
     } else {
