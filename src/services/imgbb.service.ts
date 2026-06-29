@@ -29,7 +29,6 @@ function compressImage(file: File): Promise<Blob> {
       }
       ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
 
-      // Sempre converte para JPEG — resolve problema com HEIC do iPhone
       canvas.toBlob(
         (blob) => {
           if (blob) resolve(blob);
@@ -65,7 +64,6 @@ export const imgbbService = {
       throw new Error("Chave da API do ImgBB não configurada");
     }
 
-    // Converte qualquer formato (incluindo HEIC do iPhone) para JPEG
     const compressedBlob = await compressImage(file);
     const base64Image = await blobToBase64(compressedBlob);
 
@@ -77,10 +75,6 @@ export const imgbbService = {
       method: "POST",
       body: formData,
     });
-
-    if (!response.ok) {
-      throw new Error("Falha na conexão com o ImgBB");
-    }
 
     const result = await response.json();
 
