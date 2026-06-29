@@ -18,7 +18,7 @@ export default function AgendarColetaScreen() {
             necessidade da paciente e realizada na clinica Ultramamo(protocolo SUS).
           </p>
           <p>
-            <strong>ORIENTAÇÕES PARA EXAME PREVENTIVO DE COLO DE ÚTERO ANUAL: </strong>
+            <strong>ORIENTAÇÕES PARA EXAME PREVENTIVO DO COLO DO ÚTERO ANUAL: </strong>
           </p>
           <p>
             <ul>
