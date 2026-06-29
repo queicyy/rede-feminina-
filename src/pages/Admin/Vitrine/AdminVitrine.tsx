@@ -68,6 +68,7 @@ const Select = styled.select`
     border-color: #d81b60;
   }
 `;
+
 const PhotoPicker = styled.button`
   display: flex;
   align-items: center;
@@ -89,7 +90,6 @@ const PhotoPreview = styled.img`
   width: 100%;
   max-height: 220px;
   object-fit: contain;
-  
   background: #f4f4f4;
   border-radius: 10px;
 `;
@@ -104,13 +104,8 @@ const Button = styled.button`
   font-weight: 700;
   cursor: pointer;
   transition: 0.2s;
-  &:hover {
-    background: #c2185b;
-  }
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
+  &:hover { background: #c2185b; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
 `;
 
 const Tabs = styled.div`
@@ -217,209 +212,211 @@ const categoryLabel: Record<VitrineCategory, string> = {
   bazar: "Bazar Chic",
   artesanato: "Artesanato",
 };
+
 const AdminVitrine: React.FC = () => {
-    const history = useHistory();
-    const { getAllItems, createItem, updateItem, deleteItem } = useVitrine();
-    const fileInputRef = useRef<HTMLInputElement>(null);
-  
-    const [items, setItems] = useState<IVitrineItem[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [uploadingPhoto, setUploadingPhoto] = useState(false);
-    const [toast, setToast] = useState<{ msg: string; success: boolean } | null>(null);
-    const [editingId, setEditingId] = useState<string | null>(null);
-    const [activeTab, setActiveTab] = useState<VitrineCategory>("bazar");
-    const [photoPreview, setPhotoPreview] = useState<string>("");
-  
-    const emptyForm: IVitrineItem = {
-      title: "",
-      description: "",
-      price: 0,
-      imageUrl: "",
-      category: "bazar",
-    };
-  
-    const [form, setForm] = useState<IVitrineItem>(emptyForm);
-  
-    useEffect(() => {
-      fetchItems();
-    }, []);
-  
-    const fetchItems = async () => {
-      try {
-        const data = await getAllItems();
-        setItems(data);
-      } catch {
-        showToast("Erro ao carregar itens", false);
+  const history = useHistory();
+  const { getAllItems, createItem, updateItem, deleteItem } = useVitrine();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [items, setItems] = useState<IVitrineItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [toast, setToast] = useState<{ msg: string; success: boolean } | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<VitrineCategory>("bazar");
+  const [photoPreview, setPhotoPreview] = useState<string>("");
+
+  const emptyForm: IVitrineItem = {
+    title: "",
+    description: "",
+    price: 0,
+    imageUrl: "",
+    category: "bazar",
+  };
+
+  const [form, setForm] = useState<IVitrineItem>(emptyForm);
+
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+  const fetchItems = async () => {
+    try {
+      const data = await getAllItems();
+      setItems(data);
+    } catch {
+      showToast("Erro ao carregar itens", false);
+    }
+  };
+
+  const showToast = (msg: string, success: boolean) => {
+    setToast({ msg, success });
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const handleChange = (field: keyof IVitrineItem, value: string | number) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setPhotoPreview(URL.createObjectURL(file));
+    setUploadingPhoto(true);
+    try {
+      const url = await imgbbService.uploadImage(file);
+      setForm((prev) => ({ ...prev, imageUrl: url }));
+      showToast("Foto enviada com sucesso!", true);
+    } catch {
+      showToast("Erro ao enviar a foto. Tente novamente.", false);
+      setPhotoPreview("");
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  const handleEditClick = (item: IVitrineItem) => {
+    setEditingId(item.id!);
+    setForm({
+      title: item.title || "",
+      description: item.description || "",
+      price: item.price || 0,
+      imageUrl: item.imageUrl || "",
+      category: item.category || "bazar",
+    });
+    setPhotoPreview(item.imageUrl || "");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setForm(emptyForm);
+    setPhotoPreview("");
+  };
+
+  const handleSave = async () => {
+    if (!form.title || !form.price || !form.imageUrl) {
+      showToast("Preencha título, preço e selecione uma foto!", false);
+      return;
+    }
+    setLoading(true);
+    try {
+      if (editingId) {
+        await updateItem(editingId, form);
+        showToast("Item atualizado com sucesso!", true);
+      } else {
+        await createItem(form);
+        showToast("Item criado com sucesso!", true);
       }
-    };
-  
-    const showToast = (msg: string, success: boolean) => {
-      setToast({ msg, success });
-      setTimeout(() => setToast(null), 3000);
-    };
-  
-    const handleChange = (field: keyof IVitrineItem, value: string | number) => {
-      setForm((prev) => ({ ...prev, [field]: value }));
-    };
-  
-    const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
-  
-      setPhotoPreview(URL.createObjectURL(file));
-      setUploadingPhoto(true);
-      try {
-        const url = await imgbbService.uploadImage(file);
-        setForm((prev) => ({ ...prev, imageUrl: url }));
-        showToast("Foto enviada com sucesso!", true);
-      } catch {
-        showToast("Erro ao enviar a foto. Tente novamente.", false);
-        setPhotoPreview("");
-      } finally {
-        setUploadingPhoto(false);
-      }
-    };
-  
-    const handleEditClick = (item: IVitrineItem) => {
-      setEditingId(item.id!);
-      setForm({
-        title: item.title || "",
-        description: item.description || "",
-        price: item.price || 0,
-        imageUrl: item.imageUrl || "",
-        category: item.category || "bazar",
-      });
-      setPhotoPreview(item.imageUrl || "");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    };
-  
-    const handleCancelEdit = () => {
       setEditingId(null);
       setForm(emptyForm);
       setPhotoPreview("");
-    };
-  
-    const handleSave = async () => {
-      if (!form.title || !form.price || !form.imageUrl) {
-        showToast("Preencha título, preço e selecione uma foto!", false);
-        return;
-      }
-      setLoading(true);
-      try {
-        if (editingId) {
-          await updateItem(editingId, form);
-          showToast("Item atualizado com sucesso!", true);
-        } else {
-          await createItem(form);
-          showToast("Item criado com sucesso!", true);
-        }
-        setEditingId(null);
-        setForm(emptyForm);
-        setPhotoPreview("");
-        fetchItems();
-      } catch {
-        showToast(editingId ? "Erro ao atualizar item" : "Erro ao criar item", false);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    const handleDelete = async (id: string) => {
-      if (!window.confirm("Tem certeza que deseja excluir este item?")) return;
-      try {
-        await deleteItem(id);
-        showToast("Item excluído!", true);
-        if (editingId === id) handleCancelEdit();
-        fetchItems();
-      } catch {
-        showToast("Erro ao excluir item", false);
-      }
-    };
-  
-    const filteredItems = items.filter((item) => item.category === activeTab);
-    return (
-        <AppLayout title="Admin — Bazar Chic e Artesanato" history={history}>
-          <Container>
-            <Title>{editingId ? "Editar Item" : "Gerenciar Bazar Chic e Artesanato"}</Title>
-            <Form>
-              <Select value={form.category} onChange={(e) => handleChange("category", e.target.value as VitrineCategory)}>
-                <option value="bazar">Bazar Chic</option>
-                <option value="artesanato">Artesanato</option>
-              </Select>
-    
-              <Input placeholder="Título do item *" value={form.title} onChange={(e) => handleChange("title", e.target.value)} />
-              <Input
-                placeholder="Preço (ex: 45.00) *"
-                type="number"
-                step="0.01"
-                value={form.price || ""}
-                onChange={(e) => handleChange("price", parseFloat(e.target.value) || 0)}
-              />
-              <Textarea
-                placeholder="Descrição do item"
-                value={form.description}
-                onChange={(e) => handleChange("description", e.target.value)}
-              />
-    
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                style={{ display: "none" }}
-                onChange={handlePhotoSelect}
-              />
-    
-              {photoPreview ? (
-                <PhotoPreview src={photoPreview} alt="Pré-visualização" />
-              ) : null}
-    
-              <PhotoPicker type="button" onClick={() => fileInputRef.current?.click()} disabled={uploadingPhoto}>
-                {uploadingPhoto ? "Enviando foto..." : photoPreview ? "Trocar foto" : "Selecionar foto *"}
-              </PhotoPicker>
-    
-              <Button onClick={handleSave} disabled={loading || uploadingPhoto}>
-                {loading ? "Salvando..." : editingId ? "Atualizar Item" : "Salvar Item"}
-              </Button>
-              {editingId && (
-                <Button type="button" onClick={handleCancelEdit} style={{ background: "#999" }}>
-                  Cancelar Edição
-                </Button>
-              )}
-            </Form>
-    
-            <Divider />
-    
-            <Tabs>
-              <Tab active={activeTab === "bazar"} onClick={() => setActiveTab("bazar")}>
-                Bazar Chic ({items.filter((i) => i.category === "bazar").length})
-              </Tab>
-              <Tab active={activeTab === "artesanato"} onClick={() => setActiveTab("artesanato")}>
-                Artesanato ({items.filter((i) => i.category === "artesanato").length})
-              </Tab>
-            </Tabs>
-    
-            <SectionTitle>{categoryLabel[activeTab]} cadastrados</SectionTitle>
-            {filteredItems.length === 0 ? (
-              <p style={{ color: "#999", fontSize: "14px" }}>Nenhum item cadastrado nessa categoria ainda.</p>
-            ) : (
-              filteredItems.map((item) => (
-                <ItemCard key={item.id}>
-                  <ItemImage src={item.imageUrl} alt={item.title} />
-                  <ItemInfo>
-                    <ItemTitulo>{item.title}</ItemTitulo>
-                    <ItemMeta style={{ color: "#d81b60", fontWeight: 600 }}>
-                      R$ {item.price.toFixed(2).replace(".", ",")}
-                    </ItemMeta>
-                  </ItemInfo>
-                  <EditButton onClick={() => handleEditClick(item)}>✏️</EditButton>
-                  <DeleteButton onClick={() => handleDelete(item.id!)}>🗑️</DeleteButton>
-                </ItemCard>
-              ))
-            )}
-          </Container>
-          {toast && <Toast success={toast.success}>{toast.msg}</Toast>}
-        </AppLayout>
-      );
-    };
-    
-    export default AdminVitrine;
+      fetchItems();
+    } catch {
+      showToast(editingId ? "Erro ao atualizar item" : "Erro ao criar item", false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm("Tem certeza que deseja excluir este item?")) return;
+    try {
+      await deleteItem(id);
+      showToast("Item excluído!", true);
+      if (editingId === id) handleCancelEdit();
+      fetchItems();
+    } catch {
+      showToast("Erro ao excluir item", false);
+    }
+  };
+
+  const filteredItems = items.filter((item) => item.category === activeTab);
+
+  return (
+    <AppLayout title="Admin — Bazar Chic e Artesanato" history={history}>
+      <Container>
+        <Title>{editingId ? "Editar Item" : "Gerenciar Bazar Chic e Artesanato"}</Title>
+        <Form>
+          <Select value={form.category} onChange={(e) => handleChange("category", e.target.value as VitrineCategory)}>
+            <option value="bazar">Bazar Chic</option>
+            <option value="artesanato">Artesanato</option>
+          </Select>
+
+          <Input placeholder="Título do item *" value={form.title} onChange={(e) => handleChange("title", e.target.value)} />
+          <Input
+            placeholder="Preço (ex: 45.00) *"
+            type="number"
+            step="0.01"
+            value={form.price || ""}
+            onChange={(e) => handleChange("price", parseFloat(e.target.value) || 0)}
+          />
+          <Textarea
+            placeholder="Descrição do item"
+            value={form.description}
+            onChange={(e) => handleChange("description", e.target.value)}
+          />
+
+          {/* INPUT CORRIGIDO — abre galeria no celular */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            capture={false as any}
+            style={{ display: "none" }}
+            onChange={handlePhotoSelect}
+          />
+
+          {photoPreview ? <PhotoPreview src={photoPreview} alt="Pré-visualização" /> : null}
+
+          <PhotoPicker type="button" onClick={() => fileInputRef.current?.click()} disabled={uploadingPhoto}>
+            {uploadingPhoto ? "Enviando foto..." : photoPreview ? "Trocar foto" : "Selecionar foto *"}
+          </PhotoPicker>
+
+          <Button onClick={handleSave} disabled={loading || uploadingPhoto}>
+            {loading ? "Salvando..." : editingId ? "Atualizar Item" : "Salvar Item"}
+          </Button>
+          {editingId && (
+            <Button type="button" onClick={handleCancelEdit} style={{ background: "#999" }}>
+              Cancelar Edição
+            </Button>
+          )}
+        </Form>
+
+        <Divider />
+
+        <Tabs>
+          <Tab active={activeTab === "bazar"} onClick={() => setActiveTab("bazar")}>
+            Bazar Chic ({items.filter((i) => i.category === "bazar").length})
+          </Tab>
+          <Tab active={activeTab === "artesanato"} onClick={() => setActiveTab("artesanato")}>
+            Artesanato ({items.filter((i) => i.category === "artesanato").length})
+          </Tab>
+        </Tabs>
+
+        <SectionTitle>{categoryLabel[activeTab]} cadastrados</SectionTitle>
+        {filteredItems.length === 0 ? (
+          <p style={{ color: "#999", fontSize: "14px" }}>Nenhum item cadastrado nessa categoria ainda.</p>
+        ) : (
+          filteredItems.map((item) => (
+            <ItemCard key={item.id}>
+              <ItemImage src={item.imageUrl} alt={item.title} />
+              <ItemInfo>
+                <ItemTitulo>{item.title}</ItemTitulo>
+                <ItemMeta style={{ color: "#d81b60", fontWeight: 600 }}>
+                  R$ {item.price.toFixed(2).replace(".", ",")}
+                </ItemMeta>
+              </ItemInfo>
+              <EditButton onClick={() => handleEditClick(item)}>✏️</EditButton>
+              <DeleteButton onClick={() => handleDelete(item.id!)}>🗑️</DeleteButton>
+            </ItemCard>
+          ))
+        )}
+      </Container>
+      {toast && <Toast success={toast.success}>{toast.msg}</Toast>}
+    </AppLayout>
+  );
+};
+
+export default AdminVitrine;

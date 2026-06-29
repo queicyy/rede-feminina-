@@ -164,6 +164,7 @@ const Divider = styled.div`
   background: #eee;
   margin: 24px 0;
 `;
+
 const AdminNoticias: React.FC = () => {
   const history = useHistory();
   const { allNews, createNoticia, updateNoticia, deleteNoticia } = useNoticias();
@@ -297,10 +298,12 @@ const AdminNoticias: React.FC = () => {
             onChange={(e) => handleChange("date", e.target.value)}
           />
 
+          {/* INPUT CORRIGIDO — abre galeria no celular */}
           <input
             ref={fileInputRef}
             type="file"
             accept="image/*"
+            capture={false as any}
             style={{ display: "none" }}
             onChange={handlePhotoSelect}
           />

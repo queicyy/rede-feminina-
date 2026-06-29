@@ -94,13 +94,8 @@ const Button = styled.button`
   font-weight: 700;
   cursor: pointer;
   transition: 0.2s;
-  &:hover {
-    background: #c2185b;
-  }
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
+  &:hover { background: #c2185b; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
 `;
 
 const EventoCard = styled.div`
@@ -184,6 +179,7 @@ const Divider = styled.div`
   background: #eee;
   margin: 24px 0;
 `;
+
 const AdminEventos: React.FC = () => {
   const history = useHistory();
   const { getAllEventos, createEvento, updateEvento, deleteEvento } = useEventos();
@@ -321,10 +317,12 @@ const AdminEventos: React.FC = () => {
           <Input placeholder="Preço (ex: R$ 120,00)" value={form.preco} onChange={(e) => handleChange("preco", e.target.value)} />
           <Textarea placeholder="Descrição do evento" value={form.descricao} onChange={(e) => handleChange("descricao", e.target.value)} />
 
+          {/* INPUT CORRIGIDO — abre galeria no celular */}
           <input
             ref={fileInputRef}
             type="file"
             accept="image/*"
+            capture={false as any}
             style={{ display: "none" }}
             onChange={handlePhotoSelect}
           />
