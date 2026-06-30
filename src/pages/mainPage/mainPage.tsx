@@ -4,6 +4,7 @@ import {
   ContentColumn,
   Header,
   WrapperBody,
+  BannerWrapper,
   BannerHome,
   BannerSlide,
   QuickAccess,
@@ -94,6 +95,7 @@ export default function MainPage() {
           <WrapperBody>
 
             {/* ── BANNER / CARROSSEL ── */}
+            <BannerWrapper>
             <Swiper
               modules={[Autoplay, Pagination]}
               autoplay={{ delay: 4000, disableOnInteraction: false }}
@@ -125,10 +127,11 @@ export default function MainPage() {
 
               <SwiperSlide>
                 <BannerSlide>
-                  <img src="/assets/images/exame-preventivo.png" alt="Exame Preventivo" />
+                  <img src="/assets/images/jogo-brasil.png" alt="Horário Especial - Jogo do Brasil" />
                 </BannerSlide>
               </SwiperSlide>
             </Swiper>
+            </BannerWrapper>
 
             {/* ── ACESSO RÁPIDO ── */}
             <h2 style={{ fontWeight: 700, padding: "0 16px", marginBottom: "6px" }}>

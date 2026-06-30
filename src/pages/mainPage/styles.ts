@@ -111,9 +111,15 @@ export const ContentCard = styled.div`
 `;
 
 /* ── BANNER ── */
+export const BannerWrapper = styled.div`
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+`;
+
 export const BannerHome = styled.div`
   width: 100%;
-  min-height: 220px;
+  height: 280px;
   background: linear-gradient(135deg, #ffd5e2, #ffb6cf);
   padding: 30px;
   margin-bottom: 0;
@@ -167,6 +173,7 @@ export const BannerHome = styled.div`
   @media (max-width: 768px) {
     flex-direction: row;
     text-align: left;
+    height: 180px;
 
     h2 {
       font-size: 20px;
@@ -179,6 +186,7 @@ export const BannerHome = styled.div`
 
   @media (max-width: 380px) {
     padding: 20px;
+    height: 140px;
 
     h2 {
       font-size: 17px;
@@ -192,13 +200,27 @@ export const BannerHome = styled.div`
 
 export const BannerSlide = styled.div`
   width: 100%;
-  height: 220px;
+  height: 280px;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffe1ec;
 
   img {
     width: 100%;
     height: 100%;
+    display: block;
     object-fit: cover;
+    object-position: center;
+  }
+
+  @media (max-width: 768px) {
+    height: 180px;
+  }
+
+  @media (max-width: 380px) {
+    height: 140px;
   }
 `;
 
